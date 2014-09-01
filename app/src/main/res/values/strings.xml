@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Copyright 2014 MTRamin
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License
+-->
+
+<resources>
+    <!-- App Strings -->
+    <string name="app_name">Sunday Pick\'Em</string>
+
+    <!-- Login & Register Activity -->
+    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_register">Register</string>
+
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="register_password">Password</string>
+    <string name="register_password_repeat">Repeat Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_register_button">New here? Create an account to play!</string>
+    <string name="action_register">Register</string>
+    <string name="action_register_short">Sign up</string>
+
+    <string name="error_username_short">This username is too short</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_incorrect_login">This login information is incorrect</string>
+    <string name="error_incorrect_register">Sign-up failed :(</string>
+    <string name="error_field_required">This field is required</string>
+
+    <!-- Settings -->
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="preferences_title_timezones">Timezones</string>
+
+    <string name="title_use_home_timezone">Use local timezone</string>
+    <string name="use_phone_timezone">Using device timezone</string>
+    <string name="use_est_timezone">Using EST</string>
+
+    <!-- Action Bar / Menu buttons -->
+    <string name="action_logout">Sign out</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_show_highscores">Highscores</string>
+
+    <!-- Activities -->
+    <string name="list_pick_score_divider">:</string>
+    <string name="list_pick_time">Someday, Sometime</string>
+    <string name="games_final">Final</string>
+    <string name="stats_username">Username</string>
+    <string name="title_activity_highscores">HighscoresActivity</string>
+    <string name="title_activity_user_stats">UserStatsActivity</string>
+    <string name="current_week">Current Week</string>
+    <string name="highscores">Highscores</string>
+    <string name="highscores_overall">Overall</string>
+
+    <!-- General -->
+    <string name="vs">vs</string>
+    <string name="dummy_number">0</string>
+    <string name="na_number">-</string>
+    <string name="divider">/</string>
+    <string name="season">Season</string>
+    <string name="week">Week</string>
+    <string name="rank">Rank</string>
+    <string name="percent">%</string>
+
+    <!-- Errors -->
+    <string name="error_update">Can\'t reach server. Picking is disabled.</string>
+    <string name="error_without_picking">Can\'t reach server.</string>
+    <string name="check_connection">Please check your connection.</string>
+    <string name="server_down">Can\'t reach server. Try again later. Sorry :(</string>
+
+
+    <string name="empty_week_scores">There are no scores for this week yet</string>
+    <string name="empty_overall_scores">There are no scores for this season yet</string>
+
+
+</resources>

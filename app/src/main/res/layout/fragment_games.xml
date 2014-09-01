@@ -1,0 +1,157 @@
+<!--
+    Copyright 2014 MTRamin
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License
+-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    tools:parent="de.mtrstudios.nflpickem.UI.Games.GamesFragment">
+
+    <View
+        android:id="@+id/errorBackground"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/secondary_darker"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/errorIcon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/loginbackgroundicon"
+        android:visibility="invisible" />
+
+    <RelativeLayout
+        android:id="@+id/seasonInfo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:background="@color/secondary_darker"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/textUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/stats_username"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textUserScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/textUserName"
+            android:layout_marginTop="5dp"
+            android:text="@string/na_number"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textUserScoreDivider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textUserName"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/textUserScore"
+            android:text="@string/divider"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textUserMaxScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textUserName"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/textUserScoreDivider"
+            android:text="@string/na_number"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textSeason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/season"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textWeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/textSeason"
+            android:layout_marginTop="5dp"
+            android:text="@string/week"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/updateError"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:animateLayoutChanges="true"
+        android:background="@color/primary_darkest"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/textUpdateFailed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/error_update"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textPicksDisabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/check_connection"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/updateError"
+        android:layout_below="@id/seasonInfo">
+
+        <ListView
+            android:id="@+id/gamesListView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Copyright 2014 MTRamin
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License
+-->
+
+<resources>
+
+    <string name="undefined">Undefined</string>
+
+    <!-- Team names are altered because of licensing -->
+    <string name="ari">Arizona</string>
+    <string name="atl">Atlanta</string>
+    <string name="bal">Baltimore</string>
+    <string name="buf">Buffalo</string>
+    <string name="car">Carolina</string>
+    <string name="chi">Chicago</string>
+    <string name="cin">Cincinnati</string>
+    <string name="cle">Cleveland</string>
+    <string name="dal">Dallas</string>
+    <string name="den">Denver</string>
+    <string name="det">Detroit</string>
+    <string name="gb">Green Bay</string>
+    <string name="hou">Houston</string>
+    <string name="ind">Indianapolis</string>
+    <string name="jax">Jacksonville</string>
+    <string name="kc">Kansas City</string>
+    <string name="mia">Miami</string>
+    <string name="min">Minnesota</string>
+    <string name="ne">New England</string>
+    <string name="no">New Orleans</string>
+    <string name="nyg">New York</string>
+    <string name="nyj">New York</string>
+    <string name="oak">Oakland</string>
+    <string name="phi">Philadelphia</string>
+    <string name="pit">Pittsburgh</string>
+    <string name="sd">San Diego</string>
+    <string name="sea">Seattle</string>
+    <string name="sf">San Francisco</string>
+    <string name="stl">Saint Louis</string>
+    <string name="tb">Tampa Bay</string>
+    <string name="ten">Tennessee</string>
+    <string name="was">Washington</string>
+    
+</resources>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Copyright 2014 MTRamin
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License
+-->
+
+<resources>
+    // Basic background colors
+    <color name="white">#FFFFFF</color>
+    <color name="game_post_kickoff">#DDDDDD</color>
+
+    // Red color - for wrong picks and error messages
+    <color name="primary_base">#FF2311</color>
+    <color name="primary_lighter">#FF4335</color>
+    <color name="primary_lightest">#FF6154</color>
+    <color name="primary_darker">#FF1300</color>
+    <color name="primary_darkest">#DF1000</color>
+    <color name="primary_ultralight">#FFB4AD</color>
+
+    // Blue color - main color for UI elements
+    <color name="secondary_base">#0FACBA</color>
+    <color name="secondary_lighter">#29B2BF</color>
+    <color name="secondary_lightest">#43BBC6</color>
+    <color name="secondary_darker">#029FAE</color>
+    <color name="secondary_darkest">#017C88</color>
+    <color name="secondary_ultralight">#B4F3F9</color>
+
+    // Yellow color - for picks
+    <color name="third_base">#FFEF11</color>
+    <color name="third_lighter">#FFF242</color>
+    <color name="third_lightest">#FFF56B</color>
+    <color name="third_darker">#CEC000</color>
+    <color name="third_darkest">#A29700</color>
+
+    // Green color - for correct picks
+    <color name="alternative_base">#9CF210</color>
+    <color name="alternative_lighter">#A9F232</color>
+    <color name="alternative_lightest">#B6F450</color>
+    <color name="alternative_darker">#94EF00</color>
+    <color name="alternative_darkest">#80CE00</color>
+    <color name="alternative_ultralight">#DFFBB1</color>
+
+</resources>
