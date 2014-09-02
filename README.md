@@ -5,7 +5,7 @@ Android application to play Pick'Em for NFL games.
 
 The application gets all it's data from the API hosted by [this server][1], which is running on heroku.
 
-![Login Screen](/screenshots/screenshot_login?raw=true)
+![Login Screen](/screenshots/screenshot_login.png?raw=true)
 ![Main Activity](/screenshots/screenshot_main.png?raw=true)
 
 
