@@ -36,8 +36,8 @@ import java.util.Map;
 
 import de.mtrstudios.nflpickem.API.Data.Game;
 import de.mtrstudios.nflpickem.API.Data.Pick;
-import de.mtrstudios.nflpickem.Handlers.NFLTeams;
 import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
+import de.mtrstudios.nflpickem.NFLTeams;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
 
