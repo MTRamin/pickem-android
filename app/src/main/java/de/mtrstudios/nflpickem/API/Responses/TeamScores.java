@@ -23,7 +23,7 @@ import java.util.Map;
 import de.mtrstudios.nflpickem.API.Data.TeamScore;
 
 /**
- * Stores data about teams scores - received as a response from the server
+ * Stores appData about teams scores - received as a response from the server
  */
 public class TeamScores {
     private List<TeamScore> teamScores;

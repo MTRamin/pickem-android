@@ -17,7 +17,7 @@
 package de.mtrstudios.nflpickem.API.Data;
 
 /**
- * Stores data about a teams score
+ * Stores appData about a teams score
  */
 public class TeamScore {
 

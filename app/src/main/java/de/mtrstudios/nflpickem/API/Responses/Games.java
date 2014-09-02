@@ -23,7 +23,7 @@ import de.mtrstudios.nflpickem.API.Data.Game;
 import de.mtrstudios.nflpickem.API.Data.Comparators.GamesComparator;
 
 /**
- * Stores the data about games - received as a response from the server
+ * Stores the appData about games - received as a response from the server
  */
 public class Games {
     private List<Game> games;

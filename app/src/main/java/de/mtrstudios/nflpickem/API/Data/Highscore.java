@@ -17,7 +17,7 @@
 package de.mtrstudios.nflpickem.API.Data;
 
 /**
- * Stores data about a highscore entry
+ * Stores appData about a highscore entry
  */
 public class Highscore {
 

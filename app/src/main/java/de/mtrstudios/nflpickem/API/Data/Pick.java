@@ -17,7 +17,7 @@
 package de.mtrstudios.nflpickem.API.Data;
 
 /**
- * Stores data about a pick
+ * Stores appData about a pick
  */
 public class Pick {
     private String pick;

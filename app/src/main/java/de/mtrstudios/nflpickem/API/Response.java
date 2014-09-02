@@ -19,7 +19,7 @@ package de.mtrstudios.nflpickem.API;
 /**
  * Base response class. All responses from the server will have this basic layout.
  * Status indicates if an operation returned a valid result
- * Data contains the actual response data
+ * Data contains the actual response appData
  */
 public class Response<T> {
     protected String status;

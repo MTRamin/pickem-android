@@ -16,7 +16,6 @@
 
 package de.mtrstudios.nflpickem.UI.Games;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,16 +25,17 @@ import android.view.MenuItem;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
+import de.mtrstudios.nflpickem.UI.BaseActivity;
 import de.mtrstudios.nflpickem.UI.Highscores.HighscoresActivity;
 import de.mtrstudios.nflpickem.UI.Login.LoginActivity;
 import de.mtrstudios.nflpickem.UI.Settings.SettingsActivity;
 
 /**
  * Main Activity, showing a list of games and picks
- * Uses the GamesFragment to display data
- * This Activity can get called with an intent with user and season data to display old weeks/picks
+ * Uses the GamesFragment to display appData
+ * This Activity can get called with an intent with user and season appData to display old weeks/picks
  */
-public class GamesActivity extends Activity
+public class GamesActivity extends BaseActivity
         implements GamesFragment.OnFragmentInteractionListener {
 
     public static final String EXTRA_PLAYER_NAME = "player_name";
@@ -49,7 +49,7 @@ public class GamesActivity extends Activity
      * Checks if a user token is saved either in the application class or the shared preferences
      */
     private boolean isUserLoggedIn() {
-        return (!((PickEmApplication) getApplication()).getUserToken().equals("null"));
+        return (!appData.getUserToken().equals("null"));
     }
 
     @Override
@@ -122,7 +122,7 @@ public class GamesActivity extends Activity
                 return true;
 
             case R.id.action_logout:
-                application.signOut();
+                appData.signOut();
 
                 // Start Log-In Activity
                 intent = new Intent(this, LoginActivity.class);

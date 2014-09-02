@@ -36,7 +36,8 @@ import java.util.Map;
 
 import de.mtrstudios.nflpickem.API.Data.Game;
 import de.mtrstudios.nflpickem.API.Data.Pick;
-import de.mtrstudios.nflpickem.NFLTeams;
+import de.mtrstudios.nflpickem.Handlers.NFLTeams;
+import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
 
@@ -96,7 +97,7 @@ public class GamesListAdapter extends BaseAdapter {
     }
 
     /**
-     * Creates and populates the views for one row of data
+     * Creates and populates the views for one row of appData
      */
     private void createView(int position, final GameViewHolder viewHolder) {
         final String gamekey = gamekeys.get(position);
@@ -128,8 +129,8 @@ public class GamesListAdapter extends BaseAdapter {
             Picasso.with(context).load(NFLTeams.getLogoForTeam(game.getAwayTeam())).into(viewHolder.awayIcon);
 
             // Set team scores (w-l-t)
-            viewHolder.homeTeamScore.setText(((PickEmApplication) fragment.getActivity().getApplication()).getScoreForTeam(game.getHomeTeam()));
-            viewHolder.awayTeamScore.setText(((PickEmApplication) fragment.getActivity().getApplication()).getScoreForTeam(game.getAwayTeam()));
+            viewHolder.homeTeamScore.setText(PickEmDataHandler.getInstance(context).getScoreForTeam(game.getHomeTeam()));
+            viewHolder.awayTeamScore.setText(PickEmDataHandler.getInstance(context).getScoreForTeam(game.getAwayTeam()));
 
             // Set default color for pick indicators
             viewHolder.homePickIndicator.setBackgroundColor(context.getResources().getColor(R.color.third_lighter));
@@ -289,7 +290,7 @@ public class GamesListAdapter extends BaseAdapter {
     }
 
     /**
-     * Resets all data for this ListView Adapter to fill it with new data
+     * Resets all appData for this ListView Adapter to fill it with new appData
      */
     public void resetData() {
         this.gamekeys.clear();
@@ -299,15 +300,11 @@ public class GamesListAdapter extends BaseAdapter {
     }
 
     /**
-     * Adds a new Game to the Adapter data
-     * If the game is alread in the data, updates it
+     * Adds a new Game to the Adapter appData
+     * If the game is already in the appData, updates it
      */
     public void addData(Game game) {
-
-        if (this.gamekeys.contains(game.getGamekey())) {
-            this.gamekeys.remove(game.getGamekey());
-            this.games.remove(game.getGamekey());
-        }
+        this.gamekeys.remove(game.getGamekey());
 
         this.gamekeys.add(game.getGamekey());
         this.games.put(game.getGamekey(), game);
@@ -315,14 +312,10 @@ public class GamesListAdapter extends BaseAdapter {
     }
 
     /**
-     * Adds a pick to the adapter data
-     * If the pick is alread in the data, updates it
+     * Adds a pick to the adapter appData
+     * If the pick is alread in the appData, updates it
      */
     public void addData(Pick pick) {
-        if (this.picks.containsKey(pick.getGamekey())) {
-            this.picks.remove(pick.getGamekey());
-        }
-
         this.picks.put(pick.getGamekey(), pick.getPick());
     }
 

@@ -23,7 +23,7 @@ import java.util.Map;
 import de.mtrstudios.nflpickem.API.Data.GamesInWeek;
 
 /**
- * Stores data about games in a week - received as a response from the server
+ * Stores appData about games in a week - received as a response from the server
  */
 public class GamesPerWeek {
 
@@ -34,7 +34,7 @@ public class GamesPerWeek {
     }
 
     /**
-     * Returns the data as a Map
+     * Returns the appData as a Map
      * The week number acts as the key and references to the number of games played in that week
      */
     public Map<Integer, Integer> getGamesPerWeekAsMap() {

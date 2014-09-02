@@ -20,7 +20,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Stores data about information about the current season
+ * Stores appData about information about the current season
  * Received as a response from the server
  */
 public class SeasonInfo implements Parcelable {
@@ -35,7 +35,7 @@ public class SeasonInfo implements Parcelable {
     }
 
     /**
-     * Parses the data and returns the season type as a string
+     * Parses the appData and returns the season type as a string
      */
     public String getSeasonNice() {
         String prefix = "";

@@ -19,7 +19,6 @@ package de.mtrstudios.nflpickem.UI.Login;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -38,8 +37,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import de.mtrstudios.nflpickem.API.Responses.Token;
-import de.mtrstudios.nflpickem.PickEmApplication;
+import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
+import de.mtrstudios.nflpickem.Handlers.ApiHandler;
 import de.mtrstudios.nflpickem.R;
+import de.mtrstudios.nflpickem.UI.BaseActivity;
 import de.mtrstudios.nflpickem.UI.Games.GamesActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -48,7 +49,7 @@ import retrofit.client.Response;
 /**
  * A login screen that offers login via username/password.
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
 
     // UI references.
     private EditText mEmailView;
@@ -159,7 +160,7 @@ public class LoginActivity extends Activity {
             // perform the user login attempt.
 
             showProgress(true);
-            ((PickEmApplication) getApplication()).getApi().login(email, password, new Callback<de.mtrstudios.nflpickem.API.Response<Token>>() {
+            ApiHandler.getInstance().getApi().login(email, password, new Callback<de.mtrstudios.nflpickem.API.Response<Token>>() {
                 @Override
                 public void success(de.mtrstudios.nflpickem.API.Response<Token> tokenResponse, Response response) {
                     Log.i("Retrofit Login", "Success");
@@ -171,8 +172,8 @@ public class LoginActivity extends Activity {
                         mEmailView.requestFocus();
                     } else {
                         String token = tokenResponse.getData().getToken();
-                        ((PickEmApplication) getApplication()).setUserToken(token);
-                        ((PickEmApplication) getApplication()).setUserName(email);
+                        PickEmDataHandler.getInstance(getApplicationContext()).setUserToken(token);
+                        PickEmDataHandler.getInstance(getApplicationContext()).setUserName(email);
 
                         Log.i("Retrofit Login", "Received Token: " + token);
 
@@ -239,7 +240,7 @@ public class LoginActivity extends Activity {
     }
 
     /**
-     * On successful login, call the GamesActivity to display data
+     * On successful login, call the GamesActivity to display appData
      */
     private void successfulLogin() {
         Intent intent = new Intent(this, GamesActivity.class);

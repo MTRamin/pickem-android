@@ -16,7 +16,6 @@
 
 package de.mtrstudios.nflpickem.UI.PlayerStatistics;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,14 +24,15 @@ import android.view.MenuItem;
 
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
+import de.mtrstudios.nflpickem.UI.BaseActivity;
 import de.mtrstudios.nflpickem.UI.Login.LoginActivity;
 import de.mtrstudios.nflpickem.UI.Settings.SettingsActivity;
 
 /**
- * Activity that shows detailed data about a users performance over the weeks
+ * Activity that shows detailed appData about a users performance over the weeks
  * Data is shown via the PlayerStstisticsFragment
  */
-public class PlayerStatisticsActivity extends Activity implements PlayerStatisticsFragment.OnFragmentInteractionListener {
+public class PlayerStatisticsActivity extends BaseActivity implements PlayerStatisticsFragment.OnFragmentInteractionListener {
 
     public static final String EXTRA_USER_NAME = "user_name";
     private PickEmApplication application;
@@ -86,7 +86,7 @@ public class PlayerStatisticsActivity extends Activity implements PlayerStatisti
                 return true;
 
             case R.id.action_logout:
-                application.signOut();
+                appData.signOut();
 
                 // Start Log-In Activity
                 intent = new Intent(this, LoginActivity.class);

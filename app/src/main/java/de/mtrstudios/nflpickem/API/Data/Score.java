@@ -17,7 +17,7 @@
 package de.mtrstudios.nflpickem.API.Data;
 
 /**
- * Stores data about a score entry
+ * Stores appData about a score entry
  */
 public class Score {
     private int week;

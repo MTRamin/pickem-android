@@ -24,7 +24,7 @@ import de.mtrstudios.nflpickem.API.Data.Highscore;
 import de.mtrstudios.nflpickem.API.Data.Comparators.HighscoreComparator;
 
 /**
- * Stores data about highscores - received as a response from the server
+ * Stores appData about highscores - received as a response from the server
  */
 public class Highscores {
 

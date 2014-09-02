@@ -18,7 +18,6 @@ package de.mtrstudios.nflpickem.UI.PlayerStatistics;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,8 +33,10 @@ import de.mtrstudios.nflpickem.API.Data.Score;
 import de.mtrstudios.nflpickem.API.Response;
 import de.mtrstudios.nflpickem.API.Responses.Scores;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
+import de.mtrstudios.nflpickem.Handlers.ApiHandler;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
+import de.mtrstudios.nflpickem.UI.BaseFragment;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
@@ -43,14 +44,14 @@ import retrofit.RetrofitError;
  * Fragment showing detailed player statistics using a ListView with a custom adapter
  * Also handles the downloads necessary to display those statistics
  */
-public class PlayerStatisticsFragment extends Fragment {
+public class PlayerStatisticsFragment extends BaseFragment {
     private OnFragmentInteractionListener mListener;
 
     private PickEmApplication application;
 
     private PlayerStatisticsListAdapter adapter;
 
-    private String playerName = "loading...";
+    private String playerName;
     private Map<Integer, Score> scores;
 
     private TextView viewUsername;
@@ -81,6 +82,9 @@ public class PlayerStatisticsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.playerName = getString(R.string.stats_username);
+
         if (getArguments() != null) {
             Bundle bundle = getArguments();
             this.playerName = bundle.getString(PlayerStatisticsActivity.EXTRA_USER_NAME);
@@ -95,7 +99,7 @@ public class PlayerStatisticsFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_player_statistics, container, false);
 
-        // Set up ListView and its Adapter with the correct data
+        // Set up ListView and its Adapter with the correct appData
         ListView listView = (ListView) rootView.findViewById(R.id.statsListView);
         adapter = new PlayerStatisticsListAdapter((PlayerStatisticsActivity) this.getActivity(), application, playerName);
         listView.setAdapter(adapter);
@@ -147,7 +151,7 @@ public class PlayerStatisticsFragment extends Fragment {
     }
 
     /**
-     * Calculates the total score of the provided score data
+     * Calculates the total score of the provided score appData
      */
     private int getTotalScore() {
         int score = 0;
@@ -161,7 +165,7 @@ public class PlayerStatisticsFragment extends Fragment {
     }
 
     /**
-     * Adds data to the UI and shows it to the user
+     * Adds appData to the UI and shows it to the user
      */
     private void applyChangesToUI() {
 
@@ -173,7 +177,7 @@ public class PlayerStatisticsFragment extends Fragment {
 
         viewUsername.setText(this.playerName);
         viewScore.setText(String.valueOf(getTotalScore()));
-        viewMaxScore.setText(String.valueOf(application.getTotalGamesPlayed()));
+        viewMaxScore.setText(String.valueOf(appData.getTotalGamesPlayed()));
     }
 
     /**
@@ -189,14 +193,14 @@ public class PlayerStatisticsFragment extends Fragment {
     }
 
     /**
-     * Gets the scores data that should be displayed,
-     * chooses which scores data should be used or downloaded
+     * Gets the scores appData that should be displayed,
+     * chooses which scores appData should be used or downloaded
      */
     private void getUserScoresData() {
 
-        if (playerName.equals(application.getUserName())) {
+        if (playerName.equals(appData.getUserName())) {
             Log.i("PlayerStatistics", "Default user selected");
-            this.scores = application.getScoresByWeek();
+            this.scores = appData.getScoresByWeek();
             handleScores();
         } else {
             Log.i("PlayerStatistics", "Downloading new user scores");
@@ -205,11 +209,11 @@ public class PlayerStatisticsFragment extends Fragment {
     }
 
     /**
-     * Downloads new scores data and handles it accordingly
+     * Downloads new scores appData and handles it accordingly
      */
     private void downloadScores(String playerName) {
-        SeasonInfo current = application.getSeasonInfo();
-        application.getApi().getScoreForUser(playerName, current.getSeason(), current.getType(), application.getUserToken(), new Callback<Response<Scores>>() {
+        SeasonInfo current = appData.getSeasonInfo();
+        ApiHandler.getInstance().getApi().getScoreForUser(playerName, current.getSeason(), current.getType(), appData.getUserToken(), new Callback<Response<Scores>>() {
             @Override
             public void success(Response<Scores> scoresResponse, retrofit.client.Response response) {
                 Log.i("Retrofit", "Received scores successfully");

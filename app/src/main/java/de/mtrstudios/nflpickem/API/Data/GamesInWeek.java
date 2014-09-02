@@ -17,7 +17,7 @@
 package de.mtrstudios.nflpickem.API.Data;
 
 /**
- * Stores data about how many games are played in a week
+ * Stores appData about how many games are played in a week
  */
 public class GamesInWeek {
     private int season;

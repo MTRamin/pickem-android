@@ -17,7 +17,7 @@
 package de.mtrstudios.nflpickem.API.Responses;
 
 /**
- * Stores data about the a user token
+ * Stores appData about the a user token
  * Received as a response from the server
  */
 public class Token  {

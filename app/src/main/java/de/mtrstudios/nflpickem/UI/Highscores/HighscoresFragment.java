@@ -34,8 +34,10 @@ import de.mtrstudios.nflpickem.API.Data.Highscore;
 import de.mtrstudios.nflpickem.API.Response;
 import de.mtrstudios.nflpickem.API.Responses.Highscores;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
+import de.mtrstudios.nflpickem.Handlers.ApiHandler;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
+import de.mtrstudios.nflpickem.UI.BaseFragment;
 import de.mtrstudios.nflpickem.UI.PlayerStatistics.PlayerStatisticsActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -44,13 +46,12 @@ import retrofit.RetrofitError;
  * Fragment that displays a highscore list.
  * Fragment is always a child of a ViewPager
  */
-public class HighscoresFragment extends Fragment {
+public class HighscoresFragment extends BaseFragment {
 
     private static final String BUNDLE_INT = "number";
 
     private OnFragmentInteractionListener mListener;
 
-    private PickEmApplication application;
     private HighscoresActivity parent;
     private HighscoresListAdapter adapter;
 
@@ -91,7 +92,6 @@ public class HighscoresFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.application = (PickEmApplication) getActivity().getApplication();
         this.parent = (HighscoresActivity) this.getActivity();
 
         this.isOverallHighscores = true;
@@ -101,7 +101,7 @@ public class HighscoresFragment extends Fragment {
             this.weekNumber = bundle.getInt(BUNDLE_INT, -1);
 
             if (weekNumber != -1) {
-                this.seasonInfo = new SeasonInfo(application.getSeasonInfo().getSeason(), weekNumber, application.getSeasonInfo().getType());
+                this.seasonInfo = new SeasonInfo(appData.getSeasonInfo().getSeason(), weekNumber, appData.getSeasonInfo().getType());
                 isOverallHighscores = false;
             }
         }
@@ -113,11 +113,11 @@ public class HighscoresFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_highscores, container, false);
 
-        int maxScore = (isOverallHighscores) ? application.getTotalGamesPlayed() : application.getGamesCountForWeek(this.seasonInfo);
+        int maxScore = (isOverallHighscores) ? appData.getTotalGamesPlayed() : appData.getGamesCountForWeek(this.seasonInfo);
 
         // Set up listView and its adapter
         ListView listView = (ListView) rootView.findViewById(R.id.highscoreListView);
-        adapter = new HighscoresListAdapter(parent, maxScore, application.getUserName(), this.seasonInfo, isOverallHighscores);
+        adapter = new HighscoresListAdapter(parent, maxScore, appData.getUserName(), this.seasonInfo, isOverallHighscores);
         listView.setAdapter(adapter);
 
         this.viewUserRank = (TextView) rootView.findViewById(R.id.userRank);
@@ -132,14 +132,14 @@ public class HighscoresFragment extends Fragment {
             this.backgroundText.setText(getString(R.string.empty_week_scores));
         }
 
-        // Set up view to display user data and statistics. OnClick leads to detailed statistics of that user
+        // Set up view to display user appData and statistics. OnClick leads to detailed statistics of that user
         this.statsView = rootView.findViewById(R.id.userstats);
         this.statsView.setVisibility(View.GONE);
         this.statsView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(parent, PlayerStatisticsActivity.class);
-                intent.putExtra(PlayerStatisticsActivity.EXTRA_USER_NAME, application.getUserName());
+                intent.putExtra(PlayerStatisticsActivity.EXTRA_USER_NAME, appData.getUserName());
                 startActivity(intent);
             }
         });
@@ -147,7 +147,7 @@ public class HighscoresFragment extends Fragment {
         this.errorView = rootView.findViewById(R.id.updateError);
         this.errorView.setVisibility(View.GONE);
 
-        // Download data to display
+        // Download appData to display
         updateData();
 
         return rootView;
@@ -191,33 +191,33 @@ public class HighscoresFragment extends Fragment {
     }
 
     /**
-     * Updates and downloads all data necessary to populate this fragment with data
+     * Updates and downloads all appData necessary to populate this fragment with appData
      */
     private void updateData() {
 
         if (isOverallHighscores) {
-            if (!application.getHighscores().isEmpty()) {
-                // Use old highscore data downloaded in the past
+            if (!appData.getHighscores().isEmpty()) {
+                // Use old highscore appData downloaded in the past
 
                 handleUserScores();
-                handleHighscores(application.getHighscores());
+                handleHighscores(appData.getHighscores());
             } else {
-                // Download new highscore data
+                // Download new highscore appData
 
                 handleUserScores();
                 downloadHighscores();
             }
         } else {
-            if (!application.getHighscoresPerWeek().containsKey(weekNumber)) {
-                // Download new scores data
+            if (!appData.getHighscoresPerWeek().containsKey(weekNumber)) {
+                // Download new scores appData
 
                 handleUserScores();
                 downloadWeekScores();
             } else {
-                // User old scores data downloaded in the past
+                // User old scores appData downloaded in the past
 
                 handleUserScores();
-                handleHighscores(application.getHighscoresForWeek(weekNumber).getSortedHighscores());
+                handleHighscores(appData.getHighscoresForWeek(weekNumber).getSortedHighscores());
             }
         }
     }
@@ -235,7 +235,7 @@ public class HighscoresFragment extends Fragment {
 
             adapter.addData(highscore);
 
-            if (highscore.getUser().equals(this.application.getUserName())) {
+            if (highscore.getUser().equals(this.appData.getUserName())) {
                 userRank = i + 1;
             }
         }
@@ -277,15 +277,15 @@ public class HighscoresFragment extends Fragment {
     }
 
     /**
-     * Handles the scores of the logged in user and sets the data to the UI
+     * Handles the scores of the logged in user and sets the appData to the UI
      */
     private void handleUserScores() {
         hideErrorIndicator();
 
-        int score = (isOverallHighscores) ? application.getTotalScore() : application.getScoreForWeek(this.seasonInfo).getScore();
-        int maxScore = (isOverallHighscores) ? application.getTotalGamesPlayed() : application.getGamesCountForWeek(this.seasonInfo);
+        int score = (isOverallHighscores) ? appData.getTotalScore() : appData.getScoreForWeek(this.seasonInfo).getScore();
+        int maxScore = (isOverallHighscores) ? appData.getTotalGamesPlayed() : appData.getGamesCountForWeek(this.seasonInfo);
 
-        viewUserName.setText(application.getUserName());
+        viewUserName.setText(appData.getUserName());
         viewUserScore.setText(String.valueOf(score));
         viewMaxScore.setText(String.valueOf(maxScore));
 
@@ -293,16 +293,16 @@ public class HighscoresFragment extends Fragment {
     }
 
     /**
-     * Downloads the highscores for the selected week. Adds the highscores to the application data
+     * Downloads the highscores for the selected week. Adds the highscores to the application appData
      * Shows an error indicator if the download was unsuccessful
      */
     private void downloadWeekScores() {
-        application.getApi().getScoresForWeek(application.getUserToken(), this.seasonInfo.getSeason(), this.seasonInfo.getWeek(), this.seasonInfo.getType(), new Callback<Response<Highscores>>() {
+        ApiHandler.getInstance().getApi().getScoresForWeek(appData.getUserToken(), this.seasonInfo.getSeason(), this.seasonInfo.getWeek(), this.seasonInfo.getType(), new Callback<Response<Highscores>>() {
             @Override
             public void success(Response<Highscores> highscoresResponse, retrofit.client.Response response) {
                 Log.i("Retrofit", "Received scores for week");
 
-                application.addHighscoresForWeek(weekNumber, highscoresResponse.getData());
+                appData.addData(weekNumber, highscoresResponse.getData());
                 handleHighscores(highscoresResponse.getData().getSortedHighscores());
             }
 
@@ -317,17 +317,17 @@ public class HighscoresFragment extends Fragment {
     }
 
     /**
-     * Downloads the overall highscores. Adds the highscores to the application data
+     * Downloads the overall highscores. Adds the highscores to the application appData
      * Shows an error indicator if the download was unsuccessful
      */
     private void downloadHighscores() {
-        application.getApi().getHighscores(application.getUserToken(), new Callback<Response<Highscores>>() {
+        ApiHandler.getInstance().getApi().getHighscores(appData.getUserToken(), new Callback<Response<Highscores>>() {
             @Override
             public void success(Response<Highscores> highscoresResponse, retrofit.client.Response response) {
                 Log.i("Retrofit", "Received highscores");
 
-                application.setHighscores(highscoresResponse.getData().getSortedHighscores());
-                handleHighscores(application.getHighscores());
+                appData.setHighscores(highscoresResponse.getData().getSortedHighscores());
+                handleHighscores(appData.getHighscores());
             }
 
             @Override

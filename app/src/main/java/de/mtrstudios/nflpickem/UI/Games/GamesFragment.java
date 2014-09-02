@@ -17,7 +17,6 @@
 package de.mtrstudios.nflpickem.UI.Games;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -48,8 +47,10 @@ import de.mtrstudios.nflpickem.API.Responses.Picks;
 import de.mtrstudios.nflpickem.API.Responses.Scores;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.API.Responses.TeamScores;
+import de.mtrstudios.nflpickem.Handlers.ApiHandler;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
+import de.mtrstudios.nflpickem.UI.BaseFragment;
 import de.mtrstudios.nflpickem.UI.PlayerStatistics.PlayerStatisticsActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -59,7 +60,7 @@ import retrofit.RetrofitError;
  * Fragment displaying a week of games and picks
  * Uses a ListView with a custom adapter to display the games
  */
-public class GamesFragment extends Fragment {
+public class GamesFragment extends BaseFragment {
 
     // Data
     private String playerName;
@@ -82,7 +83,6 @@ public class GamesFragment extends Fragment {
     private int updateDownloadCount = 0;
 
     private PickEmApplication application;
-    private GamesActivity activity;
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -98,11 +98,6 @@ public class GamesFragment extends Fragment {
 
     /**
      * Create a new Fragment with data
-     *
-     * @param playerName
-     * @param seasonInfo
-     * @param score
-     * @return
      */
     public static GamesFragment newInstance(String playerName, SeasonInfo seasonInfo, int score) {
         GamesFragment fragment = new GamesFragment();
@@ -129,23 +124,24 @@ public class GamesFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         this.application = (PickEmApplication) getActivity().getApplication();
-        this.activity = (GamesActivity) getActivity();
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
-            this.playerName = bundle.getString(GamesActivity.EXTRA_PLAYER_NAME);
-            this.seasonInfo = bundle.getParcelable(GamesActivity.EXTRA_SEASON_INFO);
-            this.score = bundle.getInt(GamesActivity.EXTRA_WEEK_SCORE);
-        } else {
-            this.playerName = application.getUserName();
+            if (bundle.isEmpty()) {
+                this.playerName = appData.getUserName();
+            } else {
+                this.playerName = bundle.getString(GamesActivity.EXTRA_PLAYER_NAME);
+                this.seasonInfo = bundle.getParcelable(GamesActivity.EXTRA_SEASON_INFO);
+                this.score = bundle.getInt(GamesActivity.EXTRA_WEEK_SCORE);
+            }
         }
 
         // Check if picking should be enabled
-        this.isPickActivity = (this.seasonInfo == null) || (this.playerName.equals(application.getUserName()) && this.seasonInfo.equals(application.getSeasonInfo()));
+        this.isPickActivity = (this.seasonInfo == null) || (this.playerName.equals(appData.getUserName()) && this.seasonInfo.equals(appData.getSeasonInfo()));
         application.setPicksEnabled(isPickActivity);
 
         // Set ActionBar title
-        String actionBarString = (isPickActivity) ? getString(R.string.current_week) : "Week " + this.seasonInfo.getWeek();
+        String actionBarString = (isPickActivity) ? getString(R.string.current_week) : getString(R.string.week) + " " + this.seasonInfo.getWeek();
         getActivity().getActionBar().setTitle(actionBarString);
     }
 
@@ -188,7 +184,7 @@ public class GamesFragment extends Fragment {
 
         scaleIcon((ImageView) rootView.findViewById(R.id.errorIcon));
 
-        // Launch data loading tasks
+        // Launch appData loading tasks
         handleOldData();
         checkDataValidity(false);
 
@@ -263,33 +259,33 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Checks what data is available and whether it needs to be downloaded again
-     * Function is called over and over again to check all data after one another
-     * When all data is available it calls an update to the UI with finishUpdate()
+     * Checks what appData is available and whether it needs to be downloaded again
+     * Function is called over and over again to check all appData after one another
+     * When all appData is available it calls an update to the UI with finishUpdate()
      */
     private void checkDataValidity(boolean isUpdate) {
         if (isUpdate) { // Call is a forced update by the SwipeRefreshLayout
             Log.i("DataValidity", "It's an update");
             if (updateDownloadCount == 0) {
                 Log.i("DataValidity", "Updating SeasonInfo");
-                downloadSeasonInfo(isUpdate);
+                downloadSeasonInfo(true);
                 updateDownloadCount++;
             } else if (updateDownloadCount == 1) {
                 Log.i("DataValidity", "Updating Data");
-                updateData(isUpdate);
+                updateData(true);
                 updateDownloadCount++;
             } else {
                 Log.i("DataValidity", "ALL CLEAR");
                 finishUpdate();
             }
-        } else if (isPickActivity) { // Called by the regular Fragment displaying data of the logged in user
+        } else if (isPickActivity) { // Called by the regular Fragment displaying appData of the logged in user
             Log.i("DataValidity", "We can pick stuff");
             if (needSeasonInfoUpdate()) {
                 Log.i("DataValidity", "Need SeasonInfo Update");
-                downloadSeasonInfo(isUpdate);
+                downloadSeasonInfo(false);
             } else if (needDataUpdate()) {
                 Log.i("DataValidity", "Need Data Update");
-                updateData(isUpdate);
+                updateData(false);
             } else {
                 Log.i("DataValidity", "ALL CLEAR");
                 finishUpdate();
@@ -297,27 +293,27 @@ public class GamesFragment extends Fragment {
         } else { // Showing old games/picks
             Log.i("DataValidity", "It's a recap");
             if (finishedDownloads == PickEmApplication.DOWNLOADS_NEEDED_RECAP) {
-                Log.i("DataValidity", "Displaying data");
+                Log.i("DataValidity", "Displaying appData");
                 finishUpdate();
             } else {
-                Log.i("DataValidity", "Getting data");
+                Log.i("DataValidity", "Getting appData");
                 updatePastData();
             }
         }
     }
 
     /**
-     * Checks if player/game data needs to be updated before populating UI
+     * Checks if player/game appData needs to be updated before populating UI
      */
     public boolean needDataUpdate() {
-        return !application.isDataAvailable() || gamesKickedOff() || gamesActive();
+        return !appData.isDataAvailable() || gamesKickedOff() || gamesActive();
     }
 
     /**
      * Checks if season info needs to be updated before populating UI
      */
     public boolean needSeasonInfoUpdate() {
-        return application.getSeasonInfo() == null || application.getLastSeasonUpdate().before(application.getAppStart()) || gamesKickedOff();
+        return appData.getSeasonInfo() == null || appData.getLastSeasonUpdate().before(appData.getAppStart()) || gamesKickedOff();
 
     }
 
@@ -325,7 +321,7 @@ public class GamesFragment extends Fragment {
      * Checks if games are currently active
      */
     public boolean gamesActive() {
-        List<Game> games = application.getGamesForSeason(application.getSeasonInfo());
+        List<Game> games = appData.getGamesForSeason(appData.getSeasonInfo());
 
         for (Game game : games) {
             if (!game.getQuarter().equals("P") && !game.getQuarter().equals("F") && !game.getQuarter().equals("FOT")) {
@@ -336,12 +332,12 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Checks if games have kicked off since the last data update
+     * Checks if games have kicked off since the last appData update
      */
     public boolean gamesKickedOff() {
-        // If a game has started after the last update we need to update all data
-        List<Game> games = application.getGamesForSeason(application.getSeasonInfo());
-        Calendar lastUpdate = application.getLastDataUpdate();
+        // If a game has started after the last update we need to update all appData
+        List<Game> games = appData.getGamesForSeason(appData.getSeasonInfo());
+        Calendar lastUpdate = appData.getLastDataUpdate();
 
         for (Game game : games) {
             if (game.getKickoffTime().after(lastUpdate) && game.getKickoffTime().before(new GregorianCalendar())) {
@@ -352,14 +348,14 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Populates the UI with downloaded data and makes it visible
+     * Populates the UI with downloaded appData and makes it visible
      */
     public void populateUI() {
         listView.setVisibility(View.VISIBLE);
 
         ((TextView) rootView.findViewById(R.id.textUserName)).setText(playerName);
         ((TextView) rootView.findViewById(R.id.textUserScore)).setText(String.valueOf(score));
-        ((TextView) rootView.findViewById(R.id.textUserMaxScore)).setText(String.valueOf(application.getGamesCountForWeek(seasonInfo)));
+        ((TextView) rootView.findViewById(R.id.textUserMaxScore)).setText(String.valueOf(appData.getGamesCountForWeek(seasonInfo)));
 
         ((TextView) rootView.findViewById(R.id.textSeason)).setText(String.valueOf(seasonInfo.getSeasonNice()));
         ((TextView) rootView.findViewById(R.id.textWeek)).setText("Week " + String.valueOf(seasonInfo.getWeek()));
@@ -424,18 +420,18 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Handles data saved in sharedpreferences from past sessions and displays it to the user
+     * Handles appData saved in sharedpreferences from past sessions and displays it to the user
      */
     public void handleOldData() {
-        if (isPickActivity && application.isDataAvailable()) {
+        if (isPickActivity && appData.isDataAvailable()) {
             Log.i("HandleOldData", "Using old Data");
 
-            this.seasonInfo = application.getSeasonInfo();
-            this.playerName = application.getUserName();
-            this.score = application.getScoreForWeek(seasonInfo).getScore();
+            this.seasonInfo = appData.getSeasonInfo();
+            this.playerName = appData.getUserName();
+            this.score = appData.getScoreForWeek(seasonInfo).getScore();
 
-            List<Game> games = application.getGamesForSeason(seasonInfo);
-            List<Pick> picks = application.getPicksForGames(games);
+            List<Game> games = appData.getGamesForSeason(seasonInfo);
+            List<Pick> picks = appData.getPicksForGames(games);
 
             for (Game game : games) {
                 adapter.addData(game);
@@ -463,18 +459,18 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Calls downloads for old data/picks and for different users
+     * Calls downloads for old appData/picks and for different users
      */
     public void updatePastData() {
         finishedDownloads = 0;
 
-        downloadGames(seasonInfo, application.getUserToken(), false);
-        downloadPicks(seasonInfo, application.getUserToken(), false);
+        downloadGames(seasonInfo, appData.getUserToken(), false);
+        downloadPicks(seasonInfo, appData.getUserToken(), false);
 
     }
 
     /**
-     * Calls downloads for all data necessary to populate the UI
+     * Calls downloads for all appData necessary to populate the UI
      * Resets the download date and download counter and enables the refresh animation
      */
     public void updateData(boolean isForcedUpdate) {
@@ -486,11 +482,11 @@ public class GamesFragment extends Fragment {
         Log.i("UpdateData", "Downloading new Data");
 
         this.finishedDownloads = 0;
-        application.clearCurrentData();
-        application.setLastDataUpdate(new GregorianCalendar());
+        appData.clearCurrentData();
+        appData.setLastDataUpdate(new GregorianCalendar());
 
-        SeasonInfo current = application.getSeasonInfo();
-        String token = application.getUserToken();
+        SeasonInfo current = appData.getSeasonInfo();
+        String token = appData.getUserToken();
 
         downloadGames(current, token, isForcedUpdate);
         downloadPicks(current, token, isForcedUpdate);
@@ -518,13 +514,13 @@ public class GamesFragment extends Fragment {
     public void handlePicks(List<Pick> picks, boolean isNewData) {
         for (Pick pick : picks) {
             if (isNewData && isPickActivity) {
-                application.addData(pick);
+                appData.addData(pick);
             }
             adapter.addData(pick);
         }
 
         if (isNewData && isPickActivity) {
-            application.savePicks();
+            appData.savePicks();
         }
     }
 
@@ -535,33 +531,34 @@ public class GamesFragment extends Fragment {
     public void handleGames(List<Game> games, boolean isNewData) {
         for (Game game : games) {
             if (isNewData && isPickActivity) {
-                application.addData(game);
+                appData.addData(game);
             }
             adapter.addData(game);
         }
 
         if (isNewData && isPickActivity) {
-            application.saveGames();
+            appData.saveGames();
         }
     }
 
     /**
-     * Saves teamscores in the data stores and shared preferences
+     * Saves teamscores in the appData stores and shared preferences
      */
     public void handleTeamScores(Map<String, TeamScore> teamScores) {
-        application.setTeamScores(teamScores);
-        application.saveTeamScores();
+        appData.setTeamScores(teamScores);
     }
 
     /**
      * Checks if the seasonInfo has changed after an update
-     * Removes some data if seasonInfo has changed
+     * Removes some appData if seasonInfo has changed
      */
     private void checkSeasonInfoChanged(SeasonInfo current, SeasonInfo old) {
-
         if ((old == null) || (!current.equals(old))) {
-            application.seasonChanged();
-            adapter.resetData();
+            appData.seasonChanged();
+
+            if (old != null) {
+                adapter.resetData();
+            }
         }
     }
 
@@ -576,7 +573,7 @@ public class GamesFragment extends Fragment {
 
 
     /**
-     * Downloads seasonInfo and saves it's data on successful download
+     * Downloads seasonInfo and saves it's appData on successful download
      * Shows error message if download failed
      */
     private void downloadSeasonInfo(final boolean isForcedUpdate) {
@@ -584,13 +581,13 @@ public class GamesFragment extends Fragment {
             swipeRefreshLayout.setRefreshing(true);
         }
 
-        application.getApi().getSeasonInfo(application.getUserToken(), new Callback<Response<SeasonInfo>>() {
+        ApiHandler.getInstance().getApi().getSeasonInfo(appData.getUserToken(), new Callback<Response<SeasonInfo>>() {
             @Override
             public void success(Response<SeasonInfo> seasonInfoResponse, retrofit.client.Response response) {
-                SeasonInfo old = application.getSeasonInfo();
+                SeasonInfo old = appData.getSeasonInfo();
 
-                application.setSeasonInfo(seasonInfoResponse.getData());
-                application.setLastSeasonUpdate(new GregorianCalendar());
+                appData.setSeasonInfo(seasonInfoResponse.getData());
+                appData.setLastSeasonUpdate(new GregorianCalendar());
 
                 seasonInfo = seasonInfoResponse.getData();
 
@@ -609,12 +606,12 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Downloads games and saves it's data on successful download
+     * Downloads games and saves it's appData on successful download
      * Shows error message if download failed
      */
     public void downloadGames(SeasonInfo current, String token, final boolean isForcedUpdate) {
 
-        application.getApi().getGames(current.getSeason(), current.getWeek(), current.getType(), token, new Callback<Response<Games>>() {
+        ApiHandler.getInstance().getApi().getGames(current.getSeason(), current.getWeek(), current.getType(), token, new Callback<Response<Games>>() {
             @Override
             public void success(Response<Games> gamesResponse, retrofit.client.Response response) {
                 Log.i("GamesFragment", "Got Games");
@@ -636,12 +633,12 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Downloads picks and saves it's data on successful download
+     * Downloads picks and saves it's appData on successful download
      * Shows error message if download failed
      */
     public void downloadPicks(SeasonInfo current, String token, final boolean isForcedUpdate) {
 
-        application.getApi().getPicks(this.playerName, current.getSeason(), current.getWeek(), current.getType(), token, new Callback<Response<Picks>>() {
+        ApiHandler.getInstance().getApi().getPicks(this.playerName, current.getSeason(), current.getWeek(), current.getType(), token, new Callback<Response<Picks>>() {
             @Override
             public void success(Response<Picks> pickResponse, retrofit.client.Response response) {
                 Log.i("GamesFragment", "Got Picks");
@@ -665,17 +662,17 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Downloads user scores and saves it's data on successful download
+     * Downloads user scores and saves it's appData on successful download
      * Shows error message if download failed
      */
     private void downloadScores(final SeasonInfo current, String token, final boolean isForcedUpdate) {
 
-        application.getApi().getScoreForUser(application.getUserName(), current.getSeason(), current.getType(), token, new Callback<Response<Scores>>() {
+        ApiHandler.getInstance().getApi().getScoreForUser(appData.getUserName(), current.getSeason(), current.getType(), token, new Callback<Response<Scores>>() {
             @Override
             public void success(Response<Scores> scoresResponse, retrofit.client.Response response) {
                 Log.i("Retrofit", "Received scores successfully");
-                application.setScoresByWeek(scoresResponse.getData().getScoresAsMap());
-                score = application.getScoreForWeek(seasonInfo).getScore();
+                appData.setScoresByWeek(scoresResponse.getData().getScoresAsMap());
+                score = appData.getScoreForWeek(seasonInfo).getScore();
                 finishedDownloads++;
 
                 checkDownloadsFinished(isForcedUpdate);
@@ -692,18 +689,18 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Downloads games per week and saves it's data on successful download
+     * Downloads games per week and saves it's appData on successful download
      * Shows error message if download failed
      */
     private void downloadGamesPerWeek(String token, final boolean isForcedUpdate) {
-        application.getApi().getGamesPerWeek(token, new Callback<Response<GamesPerWeek>>() {
+        ApiHandler.getInstance().getApi().getGamesPerWeek(token, new Callback<Response<GamesPerWeek>>() {
             @Override
             public void success(Response<GamesPerWeek> gamesPerWeekResponse, retrofit.client.Response response) {
                 Log.i("Retrofit", "Got GamesPerWeek");
 
                 if (gamesPerWeekResponse.getData().getGamesPerWeek() != null) {
-                    application.setGamesPerWeek(gamesPerWeekResponse.getData().getGamesPerWeekAsMap());
-                    application.saveGamesPerWeek();
+                    appData.setGamesPerWeek(gamesPerWeekResponse.getData().getGamesPerWeekAsMap());
+                    appData.saveGamesPerWeek();
                 }
 
                 finishedDownloads++;
@@ -721,11 +718,11 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Downloads the teams scores and saves it's data on successful download
+     * Downloads the teams scores and saves it's appData on successful download
      * Shows error message if download failed
      */
     private void downloadTeamScores(String token, final boolean isForcedUpdate) {
-        application.getApi().getTeamScores(token, new Callback<Response<TeamScores>>() {
+        ApiHandler.getInstance().getApi().getTeamScores(token, new Callback<Response<TeamScores>>() {
             @Override
             public void success(Response<TeamScores> teamScoresResponse, retrofit.client.Response response) {
                 Log.i("Retrofit", "Got TeamScores");
@@ -747,20 +744,20 @@ public class GamesFragment extends Fragment {
     }
 
     /**
-     * Submits a pick to the server. If submitting was successful alters the data accordingly
+     * Submits a pick to the server. If submitting was successful alters the appData accordingly
      * Shows error message if download failed
      */
     public void submitPick(final String pick, final String gamekey, final GamesListAdapter.GameViewHolder viewHolder) {
 
-        application.getApi().pickGame(gamekey, pick, application.getUserToken(), new Callback<Response<Pick>>() {
+        ApiHandler.getInstance().getApi().pickGame(gamekey, pick, appData.getUserToken(), new Callback<Response<Pick>>() {
             @Override
             public void success(Response<Pick> pickResponse, retrofit.client.Response response) {
                 Log.i("Retrofit", "Pick submitted successfully");
 
                 Pick newPick = new Pick(gamekey, pick);
 
-                application.addData(newPick);
-                application.savePicks();
+                appData.addData(newPick);
+                appData.savePicks();
                 adapter.addData(newPick);
                 adapter.animateChangedPick(newPick, viewHolder);
 

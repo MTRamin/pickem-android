@@ -31,13 +31,14 @@ import java.util.Map;
 
 import de.mtrstudios.nflpickem.API.Data.Score;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
+import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.Games.GamesActivity;
 
 /**
  * ListViewAdapter to show a row of player statistics
- * Uses a ViewHandler to handle the specific views needed to display that data
+ * Uses a ViewHandler to handle the specific views needed to display that appData
  */
 public class PlayerStatisticsListAdapter extends BaseAdapter {
 
@@ -53,7 +54,7 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
     public PlayerStatisticsListAdapter(PlayerStatisticsActivity parent, PickEmApplication application, String playerName) {
         this.parent = parent;
         this.application = application;
-        this.seasonInfo = application.getSeasonInfo();
+        this.seasonInfo = PickEmDataHandler.getInstance(parent).getSeasonInfo();
         this.playerName = playerName;
     }
 
@@ -94,15 +95,15 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
     }
 
     /**
-     * Populates the views to display a row of data in the listView
+     * Populates the views to display a row of appData in the listView
      */
     private void createView(int position, ScoresViewHolder viewHolder) {
         int week = position + 1;
-        final SeasonInfo rowSeason = new SeasonInfo(application.getSeasonInfo().getSeason(), week, application.getSeasonInfo().getType());
+        final SeasonInfo rowSeason = new SeasonInfo(this.seasonInfo.getSeason(), week, this.seasonInfo.getType());
 
         if ((scores != null) && (scores.size() != 0)) {
             int score = 0;
-            int maxScore = application.getGamesCountForWeek(rowSeason);
+            int maxScore = PickEmDataHandler.getInstance(parent).getGamesCountForWeek(rowSeason);
             int percentage = 0;
 
             // Calculate percentage of correct picks
@@ -116,7 +117,7 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
                 }
             }
 
-            // Set data
+            // Set appData
             viewHolder.weekNumber.setText(String.valueOf(rowSeason.getWeek()));
             viewHolder.weekPercentage.setText(String.valueOf(percentage) + parent.getString(R.string.percent));
 
@@ -147,12 +148,9 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
     }
 
     /**
-     * Adds score data and updates it if it was already in there
+     * Adds score appData and updates it if it was already in there
      */
     public void addData(Score score) {
-        if (scores.containsKey(score.getWeek())) {
-            scores.remove(score.getWeek());
-        }
         scores.put(score.getWeek(), score);
     }
 

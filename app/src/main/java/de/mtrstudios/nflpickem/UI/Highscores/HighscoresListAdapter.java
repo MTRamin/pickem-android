@@ -36,7 +36,7 @@ import de.mtrstudios.nflpickem.UI.Games.GamesActivity;
 import de.mtrstudios.nflpickem.UI.PlayerStatistics.PlayerStatisticsActivity;
 
 /**
- * ListViewAdapter that shows data about highscores in a row.
+ * ListViewAdapter that shows appData about highscores in a row.
  */
 public class HighscoresListAdapter extends BaseAdapter {
 
@@ -94,12 +94,12 @@ public class HighscoresListAdapter extends BaseAdapter {
     }
 
     /**
-     * Populates the views with data for the current row
+     * Populates the views with appData for the current row
      */
     private void createView(int position, HighscoreViewHolder viewHolder) {
         final Highscore highscore = highscores.get(position);
 
-        // Set highscore data, rank and user name
+        // Set highscore appData, rank and user name
         viewHolder.highscoreRank.setText(String.valueOf(position + 1));
         viewHolder.highscoreUser.setText(highscore.getUser());
 
@@ -121,7 +121,7 @@ public class HighscoresListAdapter extends BaseAdapter {
             viewHolder.highscorePlayerIndicator.setVisibility(View.INVISIBLE);
         }
 
-        // Set onClickListeners that show more detailed data about the user and his picks
+        // Set onClickListeners that show more detailed appData about the user and his picks
         // Either the playerStatistics are shown, or a specific week (depends on if overall or week view was clicked)
         // Override transitions with custom activity animations
         viewHolder.highscoreItem.setOnClickListener(new View.OnClickListener() {

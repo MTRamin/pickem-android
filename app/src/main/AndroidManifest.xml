@@ -17,7 +17,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.mtrstudios.nflpickem">
 
-    <!-- Internet permission to download data from the API -->
+    <!-- Internet permission to download appData from the API -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application

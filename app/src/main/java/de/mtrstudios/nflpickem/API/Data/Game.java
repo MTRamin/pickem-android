@@ -26,7 +26,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 /**
- * Stores data about a game
+ * Stores appData about a game
  */
 public class Game {
 

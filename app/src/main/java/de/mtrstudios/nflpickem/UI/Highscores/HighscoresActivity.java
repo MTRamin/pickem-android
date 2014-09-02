@@ -17,7 +17,6 @@
 package de.mtrstudios.nflpickem.UI.Highscores;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -30,8 +29,8 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
+import de.mtrstudios.nflpickem.UI.BaseActivity;
 import de.mtrstudios.nflpickem.UI.Login.LoginActivity;
 import de.mtrstudios.nflpickem.UI.Settings.SettingsActivity;
 
@@ -40,7 +39,7 @@ import de.mtrstudios.nflpickem.UI.Settings.SettingsActivity;
  * Uses a ViewPager to display week-by-week highscores
  * The highscore lists are displayed by HighscoreFragments
  */
-public class HighscoresActivity extends Activity implements ActionBar.TabListener, HighscoresFragment.OnFragmentInteractionListener {
+public class HighscoresActivity extends BaseActivity implements ActionBar.TabListener, HighscoresFragment.OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -57,8 +56,6 @@ public class HighscoresActivity extends Activity implements ActionBar.TabListene
      */
     ViewPager mViewPager;
 
-    private PickEmApplication application;
-
     @Override
     public void onFragmentInteraction(Uri uri) {
 
@@ -69,8 +66,6 @@ public class HighscoresActivity extends Activity implements ActionBar.TabListene
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_highscores);
-
-        this.application = (PickEmApplication) getApplication();
 
         if (savedInstanceState == null) {
         }
@@ -85,7 +80,7 @@ public class HighscoresActivity extends Activity implements ActionBar.TabListene
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-        mSectionsPagerAdapter.setWeeks(application.getSeasonInfo().getWeek());
+        mSectionsPagerAdapter.setWeeks(appData.getSeasonInfo().getWeek());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -137,7 +132,7 @@ public class HighscoresActivity extends Activity implements ActionBar.TabListene
                 return true;
 
             case R.id.action_logout:
-                application.signOut();
+                appData.signOut();
 
                 // Start Log-In Activity
                 intent = new Intent(this, LoginActivity.class);

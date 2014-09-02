@@ -23,7 +23,7 @@ import java.util.TreeMap;
 import de.mtrstudios.nflpickem.API.Data.Score;
 
 /**
- * Stores data about a users scores - received as a response from the server
+ * Stores appData about a users scores - received as a response from the server
  */
 public class Scores {
     private List<Score> scores;
@@ -34,7 +34,7 @@ public class Scores {
 
     /**
      * Returns the scores as a Map
-     * The week number acts as the key and references to the score data
+     * The week number acts as the key and references to the score appData
      */
     public Map<Integer, Score> getScoresAsMap() {
         Map<Integer, Score> scoreMap = new TreeMap<Integer, Score>();

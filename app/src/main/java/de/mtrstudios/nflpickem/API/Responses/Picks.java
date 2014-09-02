@@ -21,7 +21,7 @@ import java.util.List;
 import de.mtrstudios.nflpickem.API.Data.Pick;
 
 /**
- * Stores data about picks - received as a response from the server
+ * Stores appData about picks - received as a response from the server
  */
 public class Picks {
     private List<Pick> picks;
