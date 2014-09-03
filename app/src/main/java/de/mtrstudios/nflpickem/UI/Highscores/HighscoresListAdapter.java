@@ -49,12 +49,8 @@ public class HighscoresListAdapter extends BaseAdapter {
     private SeasonInfo seasonInfo;
     private boolean isOverallHighscores;
 
-    public HighscoresListAdapter(HighscoresActivity parent, int maxScore, String currentPlayer, SeasonInfo seasonInfo, boolean isOverallHighscores) {
+    public HighscoresListAdapter(HighscoresActivity parent) {
         this.parent = parent;
-        this.maxScore = maxScore;
-        this.currentPlayer = currentPlayer;
-        this.seasonInfo = seasonInfo;
-        this.isOverallHighscores = isOverallHighscores;
     }
 
     @Override
@@ -151,6 +147,30 @@ public class HighscoresListAdapter extends BaseAdapter {
 
     public void addData(Highscore highscore) {
         this.highscores.add(highscore);
+    }
+
+    public void setSeasonInfo(SeasonInfo seasonInfo) {
+        this.seasonInfo = seasonInfo;
+    }
+
+    public void setOverallHighscores(boolean overallHighscores) {
+        this.isOverallHighscores = overallHighscores;
+    }
+
+    public void setMaxScore(int maxScore) {
+        this.maxScore = maxScore;
+    }
+
+    public void setCurrentPlayer(String playerName) {
+        this.currentPlayer = playerName;
+    }
+
+    /**
+     * Clear the data of the list
+     */
+    public void clearData() {
+        this.highscores.clear();
+        notifyDataSetChanged();
     }
 
     /**

@@ -32,6 +32,10 @@ public class Scores {
         return scores;
     }
 
+    public Scores(List<Score> scores) {
+        this.scores = scores;
+    }
+
     /**
      * Returns the scores as a Map
      * The week number acts as the key and references to the score appData
@@ -46,5 +50,15 @@ public class Scores {
         }
 
         return scoreMap;
+    }
+
+    public int getTotalScore() {
+        int totalScore = 0;
+
+        for (Score score : scores) {
+            totalScore += score.getScore();
+        }
+
+        return totalScore;
     }
 }

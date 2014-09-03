@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.UI;
-
-import android.app.Activity;
-import android.os.Bundle;
+package de.mtrstudios.nflpickem.Events.Load;
 
 import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 
 /**
- * Base Activity class. Sets up some variables and functions.
+ * Load event Interface that manages the user token
  */
-public class BaseActivity extends Activity {
+public abstract class LoadEvent {
 
-    protected PickEmDataHandler appData;
+    private String token = PickEmDataHandler.getInstance().getUserToken();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        this.appData = PickEmDataHandler.getInstance();
+    public String getToken() {
+        return token;
     }
 }

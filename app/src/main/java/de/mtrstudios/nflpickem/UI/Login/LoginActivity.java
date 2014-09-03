@@ -172,8 +172,8 @@ public class LoginActivity extends BaseActivity {
                         mEmailView.requestFocus();
                     } else {
                         String token = tokenResponse.getData().getToken();
-                        PickEmDataHandler.getInstance(getApplicationContext()).setUserToken(token);
-                        PickEmDataHandler.getInstance(getApplicationContext()).setUserName(email);
+                        PickEmDataHandler.getInstance().setUserToken(token);
+                        PickEmDataHandler.getInstance().setUserName(email);
 
                         Log.i("Retrofit Login", "Received Token: " + token);
 

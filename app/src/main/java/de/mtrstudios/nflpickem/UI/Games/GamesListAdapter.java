@@ -130,8 +130,8 @@ public class GamesListAdapter extends BaseAdapter {
             Picasso.with(context).load(NFLTeams.getLogoForTeam(game.getAwayTeam())).into(viewHolder.awayIcon);
 
             // Set team scores (w-l-t)
-            viewHolder.homeTeamScore.setText(PickEmDataHandler.getInstance(context).getScoreForTeam(game.getHomeTeam()));
-            viewHolder.awayTeamScore.setText(PickEmDataHandler.getInstance(context).getScoreForTeam(game.getAwayTeam()));
+            viewHolder.homeTeamScore.setText(PickEmDataHandler.getInstance().getScoreForTeam(game.getHomeTeam()));
+            viewHolder.awayTeamScore.setText(PickEmDataHandler.getInstance().getScoreForTeam(game.getAwayTeam()));
 
             // Set default color for pick indicators
             viewHolder.homePickIndicator.setBackgroundColor(context.getResources().getColor(R.color.third_lighter));
@@ -207,7 +207,7 @@ public class GamesListAdapter extends BaseAdapter {
      */
     private void pick(String pick, Game game, GameViewHolder viewHolder) {
         String currentPick = picks.get(game.getGamekey());
-        boolean pickEnabled = ((PickEmApplication) fragment.getActivity().getApplication()).isPicksEnabled();
+        boolean pickEnabled = ((PickEmApplication) fragment.getActivity().getApplication()).ismPicksEnabled();
 
         boolean needToSubmitPick = pickEnabled && ((currentPick == null) || (!currentPick.equals(pick))) && (game.getQuarter().equals("P"));
 

@@ -185,13 +185,12 @@ public class HighscoresActivity extends BaseActivity implements ActionBar.TabLis
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
 
-            int week = -1;
+            int week = 0;
             if (position != 0) {
                 week = weeks - (position - 1);
             }
 
             return HighscoresFragment.newInstance(week);
-
         }
 
         @Override

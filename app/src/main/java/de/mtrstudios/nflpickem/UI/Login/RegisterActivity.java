@@ -175,8 +175,8 @@ public class RegisterActivity extends BaseActivity {
                     } else {
 
                         String token = tokenResponse.getData().getToken();
-                        PickEmDataHandler.getInstance(getApplicationContext()).setUserToken(token);
-                        PickEmDataHandler.getInstance(getApplicationContext()).setUserName(email);
+                        PickEmDataHandler.getInstance().setUserToken(token);
+                        PickEmDataHandler.getInstance().setUserName(email);
 
                         Log.i("Retrofit Signup", "Received Token: " + token);
 

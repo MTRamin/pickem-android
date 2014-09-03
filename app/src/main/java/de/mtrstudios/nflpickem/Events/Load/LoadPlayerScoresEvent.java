@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.UI;
-
-import android.app.Activity;
-import android.os.Bundle;
-
-import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
+package de.mtrstudios.nflpickem.Events.Load;
 
 /**
- * Base Activity class. Sets up some variables and functions.
+ * Event to load a players scores from the API or the app data if available
  */
-public class BaseActivity extends Activity {
+public class LoadPlayerScoresEvent extends LoadEvent {
 
-    protected PickEmDataHandler appData;
+    private final String playerName;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        this.appData = PickEmDataHandler.getInstance();
+    public LoadPlayerScoresEvent(String playerName) {
+        this.playerName = playerName;
     }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
 }

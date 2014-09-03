@@ -13,44 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.UI;
-
-import android.app.Fragment;
-import android.os.Bundle;
+package de.mtrstudios.nflpickem.Services;
 
 import com.squareup.otto.Bus;
 
-import de.mtrstudios.nflpickem.Handlers.BusHandler;
+import de.mtrstudios.nflpickem.API.PickEmAPI;
 import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 
 /**
- * Base Fragment, sets up some variables
+ * Base class for Loader Services
  */
-public class BaseFragment extends Fragment {
+public abstract class LoaderService {
 
-    protected PickEmDataHandler mAppData;
+    protected PickEmAPI mApi;
     protected Bus mBus;
+    protected PickEmDataHandler mAppData;
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        this.mAppData = PickEmDataHandler.getInstance();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        mBus = BusHandler.getInstance();
-        mBus.register(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        mBus.unregister(this);
+    public LoaderService(PickEmAPI api, Bus bus) {
+        this.mApi = api;
+        this.mBus = bus;
+        mAppData = PickEmDataHandler.getInstance();
     }
 }

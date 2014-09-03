@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.UI;
+package de.mtrstudios.nflpickem.Events.Error;
 
-import android.app.Activity;
-import android.os.Bundle;
-
-import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
+import retrofit.RetrofitError;
 
 /**
- * Base Activity class. Sets up some variables and functions.
+ * TODO Change class comment
  */
-public class BaseActivity extends Activity {
+public class ApiErrorEvent {
+    private final RetrofitError error;
 
-    protected PickEmDataHandler appData;
+    public ApiErrorEvent(RetrofitError error) {
+        this.error = error;
+    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        this.appData = PickEmDataHandler.getInstance();
+    public RetrofitError getError() {
+        return error;
     }
 }

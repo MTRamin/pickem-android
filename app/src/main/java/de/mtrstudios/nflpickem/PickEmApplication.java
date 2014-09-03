@@ -17,7 +17,10 @@
 package de.mtrstudios.nflpickem;
 
 import android.app.Application;
+import android.content.Context;
 import android.preference.PreferenceManager;
+
+import de.mtrstudios.nflpickem.Handlers.ServiceHolder;
 
 /**
  * Custom Application Class to store all appData and handle necessary references
@@ -30,14 +33,21 @@ public class PickEmApplication extends Application {
     public static final int ANIMATION_DURATION = 200;
 
     // Global
-    private boolean picksEnabled = false;
+    private boolean mPicksEnabled = false;
 
+    private static Context mContext;
+
+    private ServiceHolder mServiceHolder;
 
     @Override
     public void onCreate() {
-        initializeSettings();
+        mContext = getApplicationContext();
 
         super.onCreate();
+
+        initializeSettings();
+        initializeServiceHolder();
+
     }
 
     /**
@@ -47,12 +57,23 @@ public class PickEmApplication extends Application {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
 
-    public boolean isPicksEnabled() {
-        return picksEnabled;
+    /**
+     * Initializes the settings values
+     */
+    private void initializeServiceHolder() {
+        mServiceHolder = new ServiceHolder();
     }
 
-    public void setPicksEnabled(boolean picksEnabled) {
-        this.picksEnabled = picksEnabled;
+    public static Context getAppContext() {
+        return mContext;
+    }
+
+    public boolean ismPicksEnabled() {
+        return mPicksEnabled;
+    }
+
+    public void setmPicksEnabled(boolean mPicksEnabled) {
+        this.mPicksEnabled = mPicksEnabled;
     }
 
 }

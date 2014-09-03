@@ -30,6 +30,10 @@ public class Highscores {
 
     private List<Highscore> highscores;
 
+    public Highscores(List<Highscore> highscores) {
+        this.highscores = highscores;
+    }
+
     public Highscores() {
         highscores = new ArrayList<Highscore>();
     }

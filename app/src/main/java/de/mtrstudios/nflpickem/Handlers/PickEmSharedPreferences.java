@@ -18,6 +18,8 @@ package de.mtrstudios.nflpickem.Handlers;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import de.mtrstudios.nflpickem.PickEmApplication;
+
 /**
  * Handling Shared Preferences
  */
@@ -43,14 +45,14 @@ public class PickEmSharedPreferences {
     private SharedPreferences sharedPreferences;
 
 
-    public PickEmSharedPreferences(Context context) {
-        sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
+    public PickEmSharedPreferences() {
+        sharedPreferences = PickEmApplication.getAppContext().getSharedPreferences(PREFS_NAME, 0);
 
     }
 
-    public static PickEmSharedPreferences getInstance(Context context) {
+    public static PickEmSharedPreferences getInstance() {
         if (mInstance == null) {
-            mInstance = new PickEmSharedPreferences(context);
+            mInstance = new PickEmSharedPreferences();
         }
 
         return mInstance;

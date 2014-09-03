@@ -32,7 +32,6 @@ import java.util.Map;
 import de.mtrstudios.nflpickem.API.Data.Score;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
-import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.Games.GamesActivity;
 
@@ -42,25 +41,23 @@ import de.mtrstudios.nflpickem.UI.Games.GamesActivity;
  */
 public class PlayerStatisticsListAdapter extends BaseAdapter {
 
-    private PickEmApplication application;
     private PlayerStatisticsActivity parent;
 
     private SeasonInfo seasonInfo;
-
     private String playerName;
 
     private Map<Integer, Score> scores = new HashMap<Integer, Score>();
 
-    public PlayerStatisticsListAdapter(PlayerStatisticsActivity parent, PickEmApplication application, String playerName) {
+    public PlayerStatisticsListAdapter(PlayerStatisticsActivity parent) {
         this.parent = parent;
-        this.application = application;
-        this.seasonInfo = PickEmDataHandler.getInstance(parent).getSeasonInfo();
-        this.playerName = playerName;
     }
 
     @Override
     public int getCount() {
-        return seasonInfo.getWeek();
+        if (seasonInfo != null) {
+            return seasonInfo.getWeek();
+        }
+        return 0;
     }
 
     @Override
@@ -103,7 +100,7 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
 
         if ((scores != null) && (scores.size() != 0)) {
             int score = 0;
-            int maxScore = PickEmDataHandler.getInstance(parent).getGamesCountForWeek(rowSeason);
+            int maxScore = PickEmDataHandler.getInstance().getGamesCountForWeek(rowSeason);
             int percentage = 0;
 
             // Calculate percentage of correct picks
@@ -152,6 +149,15 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
      */
     public void addData(Score score) {
         scores.put(score.getWeek(), score);
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public void setSeasonInfo(SeasonInfo seasonInfo) {
+        this.seasonInfo = seasonInfo;
+        notifyDataSetChanged();
     }
 
     /**

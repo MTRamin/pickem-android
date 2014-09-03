@@ -128,7 +128,7 @@ public class GamesFragment extends BaseFragment {
         if (getArguments() != null) {
             Bundle bundle = getArguments();
             if (bundle.isEmpty()) {
-                this.playerName = appData.getUserName();
+                this.playerName = mAppData.getUserName();
             } else {
                 this.playerName = bundle.getString(GamesActivity.EXTRA_PLAYER_NAME);
                 this.seasonInfo = bundle.getParcelable(GamesActivity.EXTRA_SEASON_INFO);
@@ -137,8 +137,8 @@ public class GamesFragment extends BaseFragment {
         }
 
         // Check if picking should be enabled
-        this.isPickActivity = (this.seasonInfo == null) || (this.playerName.equals(appData.getUserName()) && this.seasonInfo.equals(appData.getSeasonInfo()));
-        application.setPicksEnabled(isPickActivity);
+        this.isPickActivity = (this.seasonInfo == null) || (this.playerName.equals(mAppData.getUserName()) && this.seasonInfo.equals(mAppData.getSeasonInfo()));
+        application.setmPicksEnabled(isPickActivity);
 
         // Set ActionBar title
         String actionBarString = (isPickActivity) ? getString(R.string.current_week) : getString(R.string.week) + " " + this.seasonInfo.getWeek();
@@ -306,14 +306,14 @@ public class GamesFragment extends BaseFragment {
      * Checks if player/game appData needs to be updated before populating UI
      */
     public boolean needDataUpdate() {
-        return !appData.isDataAvailable() || gamesKickedOff() || gamesActive();
+        return !mAppData.isDataAvailable() || gamesKickedOff() || gamesActive();
     }
 
     /**
      * Checks if season info needs to be updated before populating UI
      */
     public boolean needSeasonInfoUpdate() {
-        return appData.getSeasonInfo() == null || appData.getLastSeasonUpdate().before(appData.getAppStart()) || gamesKickedOff();
+        return mAppData.getSeasonInfo() == null || mAppData.getLastSeasonUpdate().before(mAppData.getAppStart()) || gamesKickedOff();
 
     }
 
@@ -321,7 +321,7 @@ public class GamesFragment extends BaseFragment {
      * Checks if games are currently active
      */
     public boolean gamesActive() {
-        List<Game> games = appData.getGamesForSeason(appData.getSeasonInfo());
+        List<Game> games = mAppData.getGamesForSeason(mAppData.getSeasonInfo());
 
         for (Game game : games) {
             if (!game.getQuarter().equals("P") && !game.getQuarter().equals("F") && !game.getQuarter().equals("FOT")) {
@@ -336,8 +336,8 @@ public class GamesFragment extends BaseFragment {
      */
     public boolean gamesKickedOff() {
         // If a game has started after the last update we need to update all appData
-        List<Game> games = appData.getGamesForSeason(appData.getSeasonInfo());
-        Calendar lastUpdate = appData.getLastDataUpdate();
+        List<Game> games = mAppData.getGamesForSeason(mAppData.getSeasonInfo());
+        Calendar lastUpdate = mAppData.getLastDataUpdate();
 
         for (Game game : games) {
             if (game.getKickoffTime().after(lastUpdate) && game.getKickoffTime().before(new GregorianCalendar())) {
@@ -355,7 +355,7 @@ public class GamesFragment extends BaseFragment {
 
         ((TextView) rootView.findViewById(R.id.textUserName)).setText(playerName);
         ((TextView) rootView.findViewById(R.id.textUserScore)).setText(String.valueOf(score));
-        ((TextView) rootView.findViewById(R.id.textUserMaxScore)).setText(String.valueOf(appData.getGamesCountForWeek(seasonInfo)));
+        ((TextView) rootView.findViewById(R.id.textUserMaxScore)).setText(String.valueOf(mAppData.getGamesCountForWeek(seasonInfo)));
 
         ((TextView) rootView.findViewById(R.id.textSeason)).setText(String.valueOf(seasonInfo.getSeasonNice()));
         ((TextView) rootView.findViewById(R.id.textWeek)).setText("Week " + String.valueOf(seasonInfo.getWeek()));
@@ -383,7 +383,7 @@ public class GamesFragment extends BaseFragment {
             swipeRefreshLayout.setRefreshing(false);
         }
 
-        application.setPicksEnabled(false);
+        application.setmPicksEnabled(false);
 
         if (adapter.getCount() == 0) {
             rootView.findViewById(R.id.errorBackground).setVisibility(View.VISIBLE);
@@ -409,7 +409,7 @@ public class GamesFragment extends BaseFragment {
      * Hides the error label from the user, error was resolved
      */
     public void hideUpdateError() {
-        application.setPicksEnabled(true);
+        application.setmPicksEnabled(true);
 
         rootView.findViewById(R.id.errorBackground).setVisibility(View.INVISIBLE);
         rootView.findViewById(R.id.errorIcon).setVisibility(View.INVISIBLE);
@@ -423,15 +423,15 @@ public class GamesFragment extends BaseFragment {
      * Handles appData saved in sharedpreferences from past sessions and displays it to the user
      */
     public void handleOldData() {
-        if (isPickActivity && appData.isDataAvailable()) {
+        if (isPickActivity && mAppData.isDataAvailable()) {
             Log.i("HandleOldData", "Using old Data");
 
-            this.seasonInfo = appData.getSeasonInfo();
-            this.playerName = appData.getUserName();
-            this.score = appData.getScoreForWeek(seasonInfo).getScore();
+            this.seasonInfo = mAppData.getSeasonInfo();
+            this.playerName = mAppData.getUserName();
+            this.score = mAppData.getScoreForWeek(seasonInfo).getScore();
 
-            List<Game> games = appData.getGamesForSeason(seasonInfo);
-            List<Pick> picks = appData.getPicksForGames(games);
+            List<Game> games = mAppData.getGamesForSeason(seasonInfo);
+            List<Pick> picks = mAppData.getPicksForGames(games);
 
             for (Game game : games) {
                 adapter.addData(game);
@@ -464,8 +464,8 @@ public class GamesFragment extends BaseFragment {
     public void updatePastData() {
         finishedDownloads = 0;
 
-        downloadGames(seasonInfo, appData.getUserToken(), false);
-        downloadPicks(seasonInfo, appData.getUserToken(), false);
+        downloadGames(seasonInfo, mAppData.getUserToken(), false);
+        downloadPicks(seasonInfo, mAppData.getUserToken(), false);
 
     }
 
@@ -482,11 +482,11 @@ public class GamesFragment extends BaseFragment {
         Log.i("UpdateData", "Downloading new Data");
 
         this.finishedDownloads = 0;
-        appData.clearCurrentData();
-        appData.setLastDataUpdate(new GregorianCalendar());
+        mAppData.clearCurrentData();
+        mAppData.setLastDataUpdate(new GregorianCalendar());
 
-        SeasonInfo current = appData.getSeasonInfo();
-        String token = appData.getUserToken();
+        SeasonInfo current = mAppData.getSeasonInfo();
+        String token = mAppData.getUserToken();
 
         downloadGames(current, token, isForcedUpdate);
         downloadPicks(current, token, isForcedUpdate);
@@ -514,13 +514,13 @@ public class GamesFragment extends BaseFragment {
     public void handlePicks(List<Pick> picks, boolean isNewData) {
         for (Pick pick : picks) {
             if (isNewData && isPickActivity) {
-                appData.addData(pick);
+                mAppData.addData(pick);
             }
             adapter.addData(pick);
         }
 
         if (isNewData && isPickActivity) {
-            appData.savePicks();
+            mAppData.savePicks();
         }
     }
 
@@ -531,13 +531,13 @@ public class GamesFragment extends BaseFragment {
     public void handleGames(List<Game> games, boolean isNewData) {
         for (Game game : games) {
             if (isNewData && isPickActivity) {
-                appData.addData(game);
+                mAppData.addData(game);
             }
             adapter.addData(game);
         }
 
         if (isNewData && isPickActivity) {
-            appData.saveGames();
+            mAppData.saveGames();
         }
     }
 
@@ -545,7 +545,7 @@ public class GamesFragment extends BaseFragment {
      * Saves teamscores in the appData stores and shared preferences
      */
     public void handleTeamScores(Map<String, TeamScore> teamScores) {
-        appData.setTeamScores(teamScores);
+        mAppData.setTeamScores(teamScores);
     }
 
     /**
@@ -554,7 +554,7 @@ public class GamesFragment extends BaseFragment {
      */
     private void checkSeasonInfoChanged(SeasonInfo current, SeasonInfo old) {
         if ((old == null) || (!current.equals(old))) {
-            appData.seasonChanged();
+            mAppData.seasonChanged();
 
             if (old != null) {
                 adapter.resetData();
@@ -581,13 +581,13 @@ public class GamesFragment extends BaseFragment {
             swipeRefreshLayout.setRefreshing(true);
         }
 
-        ApiHandler.getInstance().getApi().getSeasonInfo(appData.getUserToken(), new Callback<Response<SeasonInfo>>() {
+        ApiHandler.getInstance().getApi().getSeasonInfo(mAppData.getUserToken(), new Callback<Response<SeasonInfo>>() {
             @Override
             public void success(Response<SeasonInfo> seasonInfoResponse, retrofit.client.Response response) {
-                SeasonInfo old = appData.getSeasonInfo();
+                SeasonInfo old = mAppData.getSeasonInfo();
 
-                appData.setSeasonInfo(seasonInfoResponse.getData());
-                appData.setLastSeasonUpdate(new GregorianCalendar());
+                mAppData.setSeasonInfo(seasonInfoResponse.getData());
+                mAppData.setLastSeasonUpdate(new GregorianCalendar());
 
                 seasonInfo = seasonInfoResponse.getData();
 
@@ -667,12 +667,12 @@ public class GamesFragment extends BaseFragment {
      */
     private void downloadScores(final SeasonInfo current, String token, final boolean isForcedUpdate) {
 
-        ApiHandler.getInstance().getApi().getScoreForUser(appData.getUserName(), current.getSeason(), current.getType(), token, new Callback<Response<Scores>>() {
+        ApiHandler.getInstance().getApi().getScoreForUser(mAppData.getUserName(), current.getSeason(), current.getType(), token, new Callback<Response<Scores>>() {
             @Override
             public void success(Response<Scores> scoresResponse, retrofit.client.Response response) {
                 Log.i("Retrofit", "Received scores successfully");
-                appData.setScoresByWeek(scoresResponse.getData().getScoresAsMap());
-                score = appData.getScoreForWeek(seasonInfo).getScore();
+                mAppData.setScoresByWeek(scoresResponse.getData().getScoresAsMap());
+                score = mAppData.getScoreForWeek(seasonInfo).getScore();
                 finishedDownloads++;
 
                 checkDownloadsFinished(isForcedUpdate);
@@ -699,8 +699,8 @@ public class GamesFragment extends BaseFragment {
                 Log.i("Retrofit", "Got GamesPerWeek");
 
                 if (gamesPerWeekResponse.getData().getGamesPerWeek() != null) {
-                    appData.setGamesPerWeek(gamesPerWeekResponse.getData().getGamesPerWeekAsMap());
-                    appData.saveGamesPerWeek();
+                    mAppData.setGamesPerWeek(gamesPerWeekResponse.getData().getGamesPerWeekAsMap());
+                    mAppData.saveGamesPerWeek();
                 }
 
                 finishedDownloads++;
@@ -749,15 +749,15 @@ public class GamesFragment extends BaseFragment {
      */
     public void submitPick(final String pick, final String gamekey, final GamesListAdapter.GameViewHolder viewHolder) {
 
-        ApiHandler.getInstance().getApi().pickGame(gamekey, pick, appData.getUserToken(), new Callback<Response<Pick>>() {
+        ApiHandler.getInstance().getApi().pickGame(gamekey, pick, mAppData.getUserToken(), new Callback<Response<Pick>>() {
             @Override
             public void success(Response<Pick> pickResponse, retrofit.client.Response response) {
                 Log.i("Retrofit", "Pick submitted successfully");
 
                 Pick newPick = new Pick(gamekey, pick);
 
-                appData.addData(newPick);
-                appData.savePicks();
+                mAppData.addData(newPick);
+                mAppData.savePicks();
                 adapter.addData(newPick);
                 adapter.animateChangedPick(newPick, viewHolder);
 

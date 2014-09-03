@@ -27,18 +27,16 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.squareup.otto.Subscribe;
+
 import java.util.Map;
 
 import de.mtrstudios.nflpickem.API.Data.Score;
-import de.mtrstudios.nflpickem.API.Response;
-import de.mtrstudios.nflpickem.API.Responses.Scores;
-import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
-import de.mtrstudios.nflpickem.Handlers.ApiHandler;
-import de.mtrstudios.nflpickem.PickEmApplication;
+import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
+import de.mtrstudios.nflpickem.Events.Load.LoadPlayerScoresEvent;
+import de.mtrstudios.nflpickem.Events.Loaded.PlayerScoresLoadedEvent;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.BaseFragment;
-import retrofit.Callback;
-import retrofit.RetrofitError;
 
 /**
  * Fragment showing detailed player statistics using a ListView with a custom adapter
@@ -47,12 +45,9 @@ import retrofit.RetrofitError;
 public class PlayerStatisticsFragment extends BaseFragment {
     private OnFragmentInteractionListener mListener;
 
-    private PickEmApplication application;
-
     private PlayerStatisticsListAdapter adapter;
 
     private String playerName;
-    private Map<Integer, Score> scores;
 
     private TextView viewUsername;
     private TextView viewScore;
@@ -90,7 +85,11 @@ public class PlayerStatisticsFragment extends BaseFragment {
             this.playerName = bundle.getString(PlayerStatisticsActivity.EXTRA_USER_NAME);
         }
 
-        this.application = ((PickEmApplication) getActivity().getApplication());
+        // Change ActionBar title to the userName
+        ActionBar actionBar = getActivity().getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(this.playerName);
+        }
     }
 
     @Override
@@ -101,16 +100,23 @@ public class PlayerStatisticsFragment extends BaseFragment {
 
         // Set up ListView and its Adapter with the correct appData
         ListView listView = (ListView) rootView.findViewById(R.id.statsListView);
-        adapter = new PlayerStatisticsListAdapter((PlayerStatisticsActivity) this.getActivity(), application, playerName);
+        adapter = new PlayerStatisticsListAdapter((PlayerStatisticsActivity) this.getActivity());
         listView.setAdapter(adapter);
 
         viewUsername = (TextView) rootView.findViewById(R.id.username);
+        viewUsername.setText(this.playerName);
         viewScore = (TextView) rootView.findViewById(R.id.userScore);
         viewMaxScore = (TextView) rootView.findViewById(R.id.possibleMaxScore);
 
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         getUserScoresData();
 
-        return rootView;
     }
 
     public void onButtonPressed(Uri uri) {
@@ -151,83 +157,40 @@ public class PlayerStatisticsFragment extends BaseFragment {
     }
 
     /**
-     * Calculates the total score of the provided score appData
+     * Posts the event to retrieve the necessary score data that should be displayed
      */
-    private int getTotalScore() {
-        int score = 0;
-
-        if (this.scores.size() > 0) {
-            for (Integer key : this.scores.keySet()) {
-                score += this.scores.get(key).getScore();
-            }
-        }
-        return score;
+    private void getUserScoresData() {
+        mBus.post(new LoadPlayerScoresEvent(this.playerName));
     }
 
     /**
-     * Adds appData to the UI and shows it to the user
+     * Receives the event when player scores are downloaded
+     * Adds the scores entries to the List adapter
+     * Fills the UI with the data
      */
-    private void applyChangesToUI() {
+    @Subscribe
+    public void onPlayerScoresLoaded(PlayerScoresLoadedEvent event) {
+        Map<Integer, Score> scores = event.getScores().getScoresAsMap();
 
-        // Change ActionBar title to the userName
-        ActionBar actionBar = getActivity().getActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(this.playerName);
-        }
+        adapter.setSeasonInfo(event.getSeasonInfo());
+        adapter.setPlayerName(event.getPlayerName());
 
-        viewUsername.setText(this.playerName);
-        viewScore.setText(String.valueOf(getTotalScore()));
-        viewMaxScore.setText(String.valueOf(appData.getTotalGamesPlayed()));
-    }
-
-    /**
-     * Handles the scores and adds it to the listAdapter
-     */
-    private void handleScores() {
-        for (int key : this.scores.keySet()) {
-            adapter.addData(this.scores.get(key));
+        for (int key : scores.keySet()) {
+            adapter.addData(scores.get(key));
         }
         adapter.notifyDataSetChanged();
 
-        applyChangesToUI();
+        viewScore.setText(String.valueOf(event.getScores().getTotalScore()));
+        viewMaxScore.setText(String.valueOf(event.getTotalGamesPlayed()));
     }
 
     /**
-     * Gets the scores appData that should be displayed,
-     * chooses which scores appData should be used or downloaded
+     * Receives the event when an error occurred during an api call
      */
-    private void getUserScoresData() {
-
-        if (playerName.equals(appData.getUserName())) {
-            Log.i("PlayerStatistics", "Default user selected");
-            this.scores = appData.getScoresByWeek();
-            handleScores();
-        } else {
-            Log.i("PlayerStatistics", "Downloading new user scores");
-            downloadScores(playerName);
-        }
-    }
-
-    /**
-     * Downloads new scores appData and handles it accordingly
-     */
-    private void downloadScores(String playerName) {
-        SeasonInfo current = appData.getSeasonInfo();
-        ApiHandler.getInstance().getApi().getScoreForUser(playerName, current.getSeason(), current.getType(), appData.getUserToken(), new Callback<Response<Scores>>() {
-            @Override
-            public void success(Response<Scores> scoresResponse, retrofit.client.Response response) {
-                Log.i("Retrofit", "Received scores successfully");
-
-                scores = scoresResponse.getData().getScoresAsMap();
-                handleScores();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.e("GamesFragment", "Error with Picks");
-                Log.e("ERROR", error.toString());
-            }
-        });
+    @Subscribe
+    public void onApiError(ApiErrorEvent event) {
+        Log.e("GamesFragment", "Error with Picks");
+        Log.e("ERROR", event.getError().toString());
     }
 
 }

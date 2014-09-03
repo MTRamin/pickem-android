@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.UI;
+package de.mtrstudios.nflpickem.Handlers;
 
-import android.app.Activity;
-import android.os.Bundle;
-
-import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
+import com.squareup.otto.Bus;
 
 /**
- * Base Activity class. Sets up some variables and functions.
+ * Handles the Otto Eventbus instance
  */
-public class BaseActivity extends Activity {
+public final class BusHandler {
 
-    protected PickEmDataHandler appData;
+    private static final Bus BUS = new Bus();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private BusHandler() {
 
-        this.appData = PickEmDataHandler.getInstance();
+    }
+
+    public static Bus getInstance() {
+        return BUS;
     }
 }

@@ -29,5 +29,6 @@ dependencies {
     compile 'com.google.code.gson:gson:+'
     compile 'com.squareup.retrofit:retrofit:+'
     compile 'com.squareup.picasso:picasso:+'
+    compile 'com.squareup:otto:+'
     compile 'com.android.support:support-v13:20.0.0'
 }

@@ -46,7 +46,6 @@ import de.mtrstudios.nflpickem.R;
 public class PickEmDataHandler {
 
     private static PickEmDataHandler instance;
-    private static Context mContext;
 
     // Essential appData about the user
     private String userToken = "null";
@@ -69,7 +68,7 @@ public class PickEmDataHandler {
     private Calendar lastUpdateScores = new GregorianCalendar(2000, 0, 1);
 
 
-    public PickEmDataHandler(Context context) {
+    public PickEmDataHandler() {
         // Initialize collections
         this.games = new HashMap<String, Game>();
         this.scoresByWeek = new TreeMap<Integer, Score>();
@@ -79,16 +78,14 @@ public class PickEmDataHandler {
         this.highscores = new ArrayList<Highscore>();
         this.highscoresPerWeek = new HashMap<Integer, Highscores>();
 
-        mContext = context;
-
         // Load SharedPreferences
         loadDataFromSharedPreferences();
     }
 
-    public static PickEmDataHandler getInstance(Context context) {
+    public static PickEmDataHandler getInstance() {
         if (instance == null) {
             Log.i("PickEmDataHandler", "Creating new instance!");
-            instance = new PickEmDataHandler(context);
+            instance = new PickEmDataHandler();
         }
 
         return instance;
@@ -100,7 +97,7 @@ public class PickEmDataHandler {
      * As appData from collections is stored as a JSON String, it needs to be deserialized
      */
     private void loadDataFromSharedPreferences() {
-        PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance(mContext);
+        PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance();
         Gson gson = GsonHandler.getInstance().getGson();
 
         // User Name and Access-Token
@@ -182,7 +179,7 @@ public class PickEmDataHandler {
         this.picks.clear();
         this.highscores.clear();
 
-        PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance(mContext);
+        PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance();
         preferences.removeData(PickEmSharedPreferences.NAME_GAMES);
         preferences.removeData(PickEmSharedPreferences.NAME_PICKS);
         preferences.removeData(PickEmSharedPreferences.NAME_HIGHSCORES);
@@ -199,7 +196,7 @@ public class PickEmDataHandler {
         this.highscores.clear();
         this.teamScores.clear();
 
-        PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance(mContext);
+        PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance();
 
         preferences.removeData(PickEmSharedPreferences.NAME_GAMES);
         preferences.removeData(PickEmSharedPreferences.NAME_PICKS);
@@ -224,7 +221,7 @@ public class PickEmDataHandler {
         this.teamScores.clear();
         this.highscores.clear();
 
-        PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance(mContext);
+        PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance();
 
         preferences.removeData(PickEmSharedPreferences.NAME_USERNAME);
         preferences.removeData(PickEmSharedPreferences.NAME_TOKEN);
@@ -255,7 +252,7 @@ public class PickEmDataHandler {
      */
     public void setUserToken(String userToken) {
         this.userToken = userToken;
-        PickEmSharedPreferences.getInstance(mContext).saveData(PickEmSharedPreferences.NAME_TOKEN, userToken);
+        PickEmSharedPreferences.getInstance().saveData(PickEmSharedPreferences.NAME_TOKEN, userToken);
     }
 
     /**
@@ -286,7 +283,7 @@ public class PickEmDataHandler {
      * The Collection is serialized into JSON format and stored as a string
      */
     public void saveGames() {
-        PickEmSharedPreferences.getInstance(mContext).saveJson(PickEmSharedPreferences.NAME_GAMES, this.games);
+        PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_GAMES, this.games);
     }
 
     /**
@@ -294,14 +291,14 @@ public class PickEmDataHandler {
      * The Collection is serialized into JSON format and stored as a string
      */
     public void savePicks() {
-        PickEmSharedPreferences.getInstance(mContext).saveJson(PickEmSharedPreferences.NAME_PICKS, this.picks);
+        PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_PICKS, this.picks);
     }
 
     /**
      * Saves appData about games in a week into JSON format and stored as a string
      */
     public void saveGamesPerWeek() {
-        PickEmSharedPreferences.getInstance(mContext).saveJson(PickEmSharedPreferences.NAME_GAMES_PER_WEEK, this.gamesPerWeek);
+        PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_GAMES_PER_WEEK, this.gamesPerWeek);
     }
 
     public Map<Integer, Score> getScoresByWeek() {
@@ -340,14 +337,14 @@ public class PickEmDataHandler {
      */
     public void setScoresByWeek(Map<Integer, Score> scoresByWeek) {
         this.scoresByWeek = scoresByWeek;
-        PickEmSharedPreferences.getInstance(mContext).saveJson(PickEmSharedPreferences.NAME_SCORES, this.scoresByWeek);
+        PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_SCORES, this.scoresByWeek);
     }
 
     /**
      * Gets the name of the currently logged in user if it is available
      */
     public String getUserName() {
-        return (userName.equals("null")) ? mContext.getString(R.string.stats_username) : userName;
+        return userName;
     }
 
     /**
@@ -356,7 +353,7 @@ public class PickEmDataHandler {
      */
     public void setUserName(String userName) {
         this.userName = userName;
-        PickEmSharedPreferences.getInstance(mContext).saveData(PickEmSharedPreferences.NAME_USERNAME, this.userName);
+        PickEmSharedPreferences.getInstance().saveData(PickEmSharedPreferences.NAME_USERNAME, this.userName);
     }
 
     /**
@@ -364,7 +361,7 @@ public class PickEmDataHandler {
      */
     public void setSeasonInfo(SeasonInfo seasonInfo) {
         this.seasonInfo = seasonInfo;
-        PickEmSharedPreferences.getInstance(mContext).saveJson(PickEmSharedPreferences.NAME_SEASON_INFO, this.seasonInfo);
+        PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_SEASON_INFO, this.seasonInfo);
     }
 
     /**
@@ -389,7 +386,7 @@ public class PickEmDataHandler {
      */
     public void setLastSeasonUpdate(Calendar lastUpdate) {
         this.lastSeasonUpdate = lastUpdate;
-        PickEmSharedPreferences.getInstance(mContext).saveData(PickEmSharedPreferences.NAME_LAST_SEASON_UPDATE, this.lastSeasonUpdate.getTimeInMillis());
+        PickEmSharedPreferences.getInstance().saveData(PickEmSharedPreferences.NAME_LAST_SEASON_UPDATE, this.lastSeasonUpdate.getTimeInMillis());
     }
 
     /**
@@ -398,7 +395,7 @@ public class PickEmDataHandler {
      */
     public void setLastDataUpdate(Calendar lastUpdate) {
         this.lastDataUpdate = lastUpdate;
-        PickEmSharedPreferences.getInstance(mContext).saveData(PickEmSharedPreferences.NAME_LAST_DATA_UPDATE, this.lastDataUpdate.getTimeInMillis());
+        PickEmSharedPreferences.getInstance().saveData(PickEmSharedPreferences.NAME_LAST_DATA_UPDATE, this.lastDataUpdate.getTimeInMillis());
     }
 
     /**
@@ -480,7 +477,7 @@ public class PickEmDataHandler {
 
     public void setTeamScores(Map<String, TeamScore> teamScores) {
         this.teamScores = teamScores;
-        PickEmSharedPreferences.getInstance(mContext).saveJson(PickEmSharedPreferences.NAME_TEAM_SCORES, this.teamScores);
+        PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_TEAM_SCORES, this.teamScores);
     }
 
     /**
