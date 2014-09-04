@@ -58,9 +58,6 @@ public class GamesFragment extends BaseFragment {
     private SeasonInfo seasonInfo;
     private int score;
 
-    // true - if the user is allowed to pick in this fragment
-    private boolean isPickActivity;
-
     // UI References
     private SwipeRefreshLayout swipeRefreshLayout;
     private View updateErrorIndicator;
@@ -110,12 +107,8 @@ public class GamesFragment extends BaseFragment {
             this.score = bundle.getInt(GamesActivity.EXTRA_WEEK_SCORE);
         }
 
-        // Check if picking should be enabled
-        this.isPickActivity = (this.seasonInfo == null) || (this.playerName.equals(mAppData.getUserName()) && this.seasonInfo.equals(mAppData.getSeasonInfo()));
-
-        // Set ActionBar title
-        String actionBarString = (isPickActivity) ? getString(R.string.current_week) : getString(R.string.week) + " " + this.seasonInfo.getWeek();
-        getActivity().getActionBar().setTitle(actionBarString);
+        String title = (this.seasonInfo != null) ? R.string.week + " " + this.seasonInfo.getWeek() : getString(R.string.current_week);
+        getActivity().getActionBar().setTitle(title);
     }
 
     @Override
@@ -145,7 +138,6 @@ public class GamesFragment extends BaseFragment {
             }
         });
         swipeRefreshLayout.setColorSchemeResources(R.color.secondary_lighter, R.color.secondary_darkest, R.color.secondary_lighter, R.color.secondary_darkest);
-        swipeRefreshLayout.setEnabled(isPickActivity);
 
         scaleIcon((ImageView) rootView.findViewById(R.id.errorIcon));
 
@@ -358,6 +350,7 @@ public class GamesFragment extends BaseFragment {
     public void onGamesDataLoaded(GamesDataLoadedEvent event) {
         hideErrorIndicator();
         swipeRefreshLayout.setRefreshing(false);
+        swipeRefreshLayout.setEnabled(event.isPickingEnabled());
 
         adapter.addGames(event.getGames());
         adapter.setPickingEnabled(event.isPickingEnabled());
