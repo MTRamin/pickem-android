@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.Services;
-
-import com.squareup.otto.Bus;
-
-import de.mtrstudios.nflpickem.API.PickEmAPI;
-import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
+package de.mtrstudios.nflpickem.Events.Outgoing;
 
 /**
- * Base class for Loader Services
+ * Event to load a players scores from the API or the app data if available
  */
-public abstract class LoaderService {
+public class LoadPlayerScoresEvent extends LoadEvent {
 
-    protected PickEmAPI mApi;
-    protected Bus mBus;
-    protected PickEmDataHandler mAppData;
+    private final String playerName;
 
-    /**
-     * Create service and get app data instance
-     */
-    public LoaderService(PickEmAPI api, Bus bus) {
-        this.mApi = api;
-        this.mBus = bus;
-        mAppData = PickEmDataHandler.getInstance();
+    public LoadPlayerScoresEvent(String playerName) {
+        this.playerName = playerName;
     }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
 }

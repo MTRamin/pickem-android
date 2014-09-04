@@ -33,8 +33,8 @@ import java.util.Map;
 
 import de.mtrstudios.nflpickem.API.Data.Score;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
-import de.mtrstudios.nflpickem.Events.Load.LoadPlayerScoresEvent;
-import de.mtrstudios.nflpickem.Events.Loaded.PlayerScoresLoadedEvent;
+import de.mtrstudios.nflpickem.Events.Outgoing.LoadPlayerScoresEvent;
+import de.mtrstudios.nflpickem.Events.Return.PlayerScoresLoadedEvent;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.BaseFragment;
 

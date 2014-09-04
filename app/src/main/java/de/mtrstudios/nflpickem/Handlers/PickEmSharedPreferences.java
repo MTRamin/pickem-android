@@ -15,7 +15,6 @@
  */
 package de.mtrstudios.nflpickem.Handlers;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import de.mtrstudios.nflpickem.PickEmApplication;
@@ -34,11 +33,9 @@ public class PickEmSharedPreferences {
     public static final String NAME_SEASON_INFO = "season_info";
     public static final String NAME_LAST_SEASON_UPDATE = "last_season_update";
     public static final String NAME_LAST_DATA_UPDATE = "last_data_update";
-    public static final String NAME_GAMES = "games";
-    public static final String NAME_PICKS = "picks";
+    public static final String NAME_GAMES = "games_new";
     public static final String NAME_SCORES = "scores";
     public static final String NAME_GAMES_PER_WEEK = "games_per_week";
-    public static final String NAME_TEAM_SCORES = "team_scores";
     public static final String NAME_HIGHSCORES = "highscores";
 
     private static PickEmSharedPreferences mInstance;

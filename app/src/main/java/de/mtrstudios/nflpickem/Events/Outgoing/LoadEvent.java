@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package de.mtrstudios.nflpickem.Events.Outgoing;
 
-package de.mtrstudios.nflpickem.API.Responses;
-
-import java.util.List;
-
-import de.mtrstudios.nflpickem.API.Data.Pick;
+import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 
 /**
- * Stores appData about picks - received as a response from the server
+ * Load event Interface that manages the user token
  */
-public class Picks {
-    private List<Pick> picks;
+public abstract class LoadEvent {
 
-    public List<Pick> getPicks() {
-        return picks;
+    private String token = PickEmDataHandler.getInstance().getUserToken();
+
+    public String getToken() {
+        return token;
     }
 }

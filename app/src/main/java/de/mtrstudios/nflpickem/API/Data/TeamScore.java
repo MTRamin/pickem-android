@@ -16,6 +16,10 @@
 
 package de.mtrstudios.nflpickem.API.Data;
 
+import android.content.Context;
+
+import de.mtrstudios.nflpickem.R;
+
 /**
  * Stores appData about a teams score
  */
@@ -39,8 +43,8 @@ public class TeamScore {
     /**
      * Creates an empty score String
      */
-    public static String getScoreEmpty() {
-        return "(0-0-0)";
+    public static String getScoreEmpty(Context context) {
+        return context.getString(R.string.score_team_empty);
     }
 
     /**

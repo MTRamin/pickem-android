@@ -13,31 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.Events.Loaded;
+package de.mtrstudios.nflpickem.Events.Return;
+
+import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 
 /**
- * TODO Change class comment
+ * Event to transmit basic statistics about this week
  */
-public class UserScoresLoadedEvent {
-    private final String playerName;
-    private final int score;
-    private final int maxScore;
+public class SeasonStatisticsLoadedEvent {
+    private String playerName;
+    private SeasonInfo seasonInfo;
+    private int score;
+    private int maxScore;
 
-    public UserScoresLoadedEvent(String playerName, int score, int maxScore) {
+    public SeasonStatisticsLoadedEvent(String playerName) {
         this.playerName = playerName;
-        this.score = score;
-        this.maxScore = maxScore;
     }
 
     public String getPlayerName() {
         return playerName;
     }
 
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public SeasonInfo getSeasonInfo() {
+        return seasonInfo;
+    }
+
+    public void setSeasonInfo(SeasonInfo seasonInfo) {
+        this.seasonInfo = seasonInfo;
+    }
+
     public int getScore() {
         return score;
     }
 
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     public int getMaxScore() {
         return maxScore;
+    }
+
+    public void setMaxScore(int maxScore) {
+        this.maxScore = maxScore;
     }
 }

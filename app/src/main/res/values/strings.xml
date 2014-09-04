@@ -73,6 +73,7 @@
     <string name="week">Week</string>
     <string name="rank">Rank</string>
     <string name="percent">%</string>
+    <string name="score_team_empty">(0-0-0)</string>
 
     <!-- Errors -->
     <string name="error_update">Can\'t reach server. Picking is disabled.</string>

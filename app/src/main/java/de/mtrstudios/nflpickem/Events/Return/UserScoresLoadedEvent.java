@@ -13,21 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.Events.Load;
+package de.mtrstudios.nflpickem.Events.Return;
 
 /**
- * Event to load a players scores from the API or the app data if available
+ * Event to transmit loaded user scores
  */
-public class LoadPlayerScoresEvent extends LoadEvent {
-
+public class UserScoresLoadedEvent {
     private final String playerName;
+    private final int score;
+    private final int maxScore;
 
-    public LoadPlayerScoresEvent(String playerName) {
+    public UserScoresLoadedEvent(String playerName, int score, int maxScore) {
         this.playerName = playerName;
+        this.score = score;
+        this.maxScore = maxScore;
     }
 
     public String getPlayerName() {
         return playerName;
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    public int getMaxScore() {
+        return maxScore;
+    }
 }

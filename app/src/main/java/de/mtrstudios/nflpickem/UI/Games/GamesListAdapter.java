@@ -30,14 +30,11 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+import de.mtrstudios.nflpickem.API.Data.Comparators.GamesComparator;
 import de.mtrstudios.nflpickem.API.Data.Game;
-import de.mtrstudios.nflpickem.API.Data.Pick;
-import de.mtrstudios.nflpickem.Handlers.NFLTeamInfoHandler;
-import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 import de.mtrstudios.nflpickem.NFLTeams;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
@@ -52,23 +49,23 @@ public class GamesListAdapter extends BaseAdapter {
     private GamesFragment fragment;
 
     // Data
-    private List<String> gamekeys = new ArrayList<String>();
-    private Map<String, Game> games = new HashMap<String, Game>();
-    private Map<String, String> picks = new HashMap<String, String>();
+    private List<Game> games = new ArrayList<Game>();
+    private boolean pickingEnabled = false;
 
     public GamesListAdapter(Context context, GamesFragment fragment) {
         this.context = context;
         this.fragment = fragment;
     }
 
+
     @Override
     public int getCount() {
-        return gamekeys.size();
+        return games.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return games.get(gamekeys.get(i));
+        return games.get(i);
     }
 
     @Override
@@ -101,11 +98,9 @@ public class GamesListAdapter extends BaseAdapter {
      * Creates and populates the views for one row of appData
      */
     private void createView(int position, final GameViewHolder viewHolder) {
-        final String gamekey = gamekeys.get(position);
-        final Game game = games.get(gamekey);
-        final String pick = picks.get(gamekey);
+        final Game game = games.get(position);
 
-        if (game != null) {
+        if (games.size() > 0) {
             // Reset some values and hide some elements that will only be shown on certain conditions
             viewHolder.gamePostKickoffIndicator.setBackgroundColor(Color.TRANSPARENT);
             viewHolder.homePickIndicator.setBackground(null);
@@ -130,8 +125,8 @@ public class GamesListAdapter extends BaseAdapter {
             Picasso.with(context).load(NFLTeams.getLogoForTeam(game.getAwayTeam())).into(viewHolder.awayIcon);
 
             // Set team scores (w-l-t)
-            viewHolder.homeTeamScore.setText(PickEmDataHandler.getInstance().getScoreForTeam(game.getHomeTeam()));
-            viewHolder.awayTeamScore.setText(PickEmDataHandler.getInstance().getScoreForTeam(game.getAwayTeam()));
+            viewHolder.homeTeamScore.setText(game.getHomeTeamSeasonScore(context));
+            viewHolder.awayTeamScore.setText(game.getAwayTeamSeasonScore(context));
 
             // Set default color for pick indicators
             viewHolder.homePickIndicator.setBackgroundColor(context.getResources().getColor(R.color.third_lighter));
@@ -150,10 +145,10 @@ public class GamesListAdapter extends BaseAdapter {
                 viewHolder.awayScore.setVisibility(View.VISIBLE);
 
                 // Set pick indicator
-                if (pick != null) {
+                if (game.getPick() != null) {
                     if (game.isPostGame()) { // Game has ended
                         // Show correct / wrong pick indicators and animate them in
-                        if (pick.equals("HOME")) {
+                        if (game.getPick().equals("HOME")) {
                             if (game.getWinner().equals("HOME")) {
                                 viewHolder.homePickIndicator.setBackgroundColor(context.getResources().getColor(R.color.alternative_base));
                             } else {
@@ -161,7 +156,7 @@ public class GamesListAdapter extends BaseAdapter {
                             }
                         }
 
-                        if (pick.equals("AWAY")) {
+                        if (game.getPick().equals("AWAY")) {
                             if (game.getWinner().equals("HOME")) {
                                 viewHolder.awayPickIndicator.setBackgroundColor(context.getResources().getColor(R.color.primary_lighter));
                             } else {
@@ -173,12 +168,12 @@ public class GamesListAdapter extends BaseAdapter {
             }
 
             // Animate the correct pick indicator to slowly show it to the user
-            if (pick != null) {
-                if (pick.equals("HOME")) {
+            if (game.getPick() != null) {
+                if (game.getPick().equals("HOME")) {
                     pickAnimation(viewHolder.homePickIndicator, true);
                 }
 
-                if (pick.equals("AWAY")) {
+                if (game.getPick().equals("AWAY")) {
                     pickAnimation(viewHolder.awayPickIndicator, false);
                 }
             }
@@ -206,13 +201,12 @@ public class GamesListAdapter extends BaseAdapter {
      * If the new pick needs to be submitted it calls the function doing so
      */
     private void pick(String pick, Game game, GameViewHolder viewHolder) {
-        String currentPick = picks.get(game.getGamekey());
-        boolean pickEnabled = ((PickEmApplication) fragment.getActivity().getApplication()).ismPicksEnabled();
+        String currentPick = game.getPick();
 
-        boolean needToSubmitPick = pickEnabled && ((currentPick == null) || (!currentPick.equals(pick))) && (game.getQuarter().equals("P"));
+        boolean needToSubmitPick = this.pickingEnabled && ((currentPick == null) || (!currentPick.equals(pick))) && (game.getQuarter().equals("P"));
 
         if (needToSubmitPick) {
-            fragment.submitPick(pick, game.getGamekey(), viewHolder);
+            fragment.submitPick(pick, game, viewHolder);
         }
     }
 
@@ -220,8 +214,8 @@ public class GamesListAdapter extends BaseAdapter {
      * Prompts two animations to hide the old pick and show the new one
      * Determines which pickIndicators need to be shown/hidden
      */
-    public void animateChangedPick(Pick pick, GameViewHolder viewHolder) {
-        boolean isHome = (pick.getPick().equals("HOME"));
+    public void animateChangedPick(String pick, GameViewHolder viewHolder) {
+        boolean isHome = (pick.equals("HOME"));
 
         View animateIn = (isHome) ? viewHolder.homePickIndicator : viewHolder.awayPickIndicator;
         View animateOut = (isHome) ? viewHolder.awayPickIndicator : viewHolder.homePickIndicator;
@@ -291,39 +285,24 @@ public class GamesListAdapter extends BaseAdapter {
     }
 
     /**
-     * Resets all appData for this ListView Adapter to fill it with new appData
-     */
-    public void resetData() {
-        this.gamekeys.clear();
-        this.games.clear();
-        this.picks.clear();
-        notifyDataSetChanged();
-    }
-
-    /**
      * Adds a new Game to the Adapter appData
      * If the game is already in the appData, updates it
      */
-    public void addData(Game game) {
-        this.gamekeys.remove(game.getGamekey());
+    public void addGames(List<Game> newGames) {
+        Collections.sort(newGames, new GamesComparator());
 
-        this.gamekeys.add(game.getGamekey());
-        this.games.put(game.getGamekey(), game);
-
+        this.games.clear();
+        this.games.addAll(newGames);
     }
 
-    /**
-     * Adds a pick to the adapter appData
-     * If the pick is alread in the appData, updates it
-     */
-    public void addData(Pick pick) {
-        this.picks.put(pick.getGamekey(), pick.getPick());
+    public void setPickingEnabled(boolean pickingEnabled) {
+        this.pickingEnabled = pickingEnabled;
     }
 
     /**
      * ViewHolder for all the views of a row that displays the game and pick information
      */
-    static class GameViewHolder {
+    public static class GameViewHolder {
         protected TextView homeName;
         protected TextView awayName;
 

@@ -25,6 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import de.mtrstudios.nflpickem.R;
+
 /**
  * Stores appData about a game
  */
@@ -45,6 +47,10 @@ public class Game {
 
     private String quarter;
     private String gameclock;
+
+    private String pick;
+    private TeamScore homeTeamSeasonScore;
+    private TeamScore awayTeamSeasonScore;
 
     public int getSeason() {
         return season;
@@ -163,5 +169,27 @@ public class Game {
 
     public String getGameclock() {
         return gameclock;
+    }
+
+    public String getPick() {
+        return pick;
+    }
+
+    public String getHomeTeamSeasonScore(Context context) {
+        if (homeTeamSeasonScore != null) {
+            return homeTeamSeasonScore.getScoreNice();
+        }
+        return TeamScore.getScoreEmpty(context);
+    }
+
+    public String getAwayTeamSeasonScore(Context context) {
+        if (awayTeamSeasonScore != null) {
+            return awayTeamSeasonScore.getScoreNice();
+        }
+        return TeamScore.getScoreEmpty(context);
+    }
+
+    public void setPick(String pick) {
+        this.pick = pick;
     }
 }

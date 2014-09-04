@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.Events.Load;
+package de.mtrstudios.nflpickem.Events.Outgoing;
 
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;

@@ -16,15 +16,12 @@
 
 package de.mtrstudios.nflpickem.API;
 
-import de.mtrstudios.nflpickem.API.Response;
+import de.mtrstudios.nflpickem.API.Data.Pick;
 import de.mtrstudios.nflpickem.API.Responses.Games;
 import de.mtrstudios.nflpickem.API.Responses.GamesPerWeek;
 import de.mtrstudios.nflpickem.API.Responses.Highscores;
-import de.mtrstudios.nflpickem.API.Data.Pick;
-import de.mtrstudios.nflpickem.API.Responses.Picks;
 import de.mtrstudios.nflpickem.API.Responses.Scores;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
-import de.mtrstudios.nflpickem.API.Responses.TeamScores;
 import de.mtrstudios.nflpickem.API.Responses.Token;
 import retrofit.Callback;
 import retrofit.http.Field;
@@ -52,8 +49,8 @@ public interface PickEmAPI {
     //  Games
     //  --------------------------------------
     @FormUrlEncoded
-    @POST("/api/games/get")
-    public void getGames(@Field("season") int season, @Field("week") int week, @Field("type") String type, @Field("token") String token, Callback<Response<Games>> callback);
+    @POST("/api/games/user")
+    public void getGames(@Field("user") String playerName, @Field("season") int season, @Field("week") int week, @Field("type") String type, @Field("token") String token, Callback<Response<Games>> callback);
 
     @FormUrlEncoded
     @POST("/api/games/seasoninfo")
@@ -70,10 +67,6 @@ public interface PickEmAPI {
     @POST("/api/picks/pick")
     public void pickGame(@Field("game") String gamekey, @Field("pick") String pick, @Field("token") String token, Callback<Response<Pick>> callback);
 
-    @FormUrlEncoded
-    @POST("/api/picks/get")
-    public void getPicks(@Field("user") String user, @Field("season") int season, @Field("week") int week, @Field("type") String type, @Field("token") String token, Callback<Response<Picks>> callback);
-
     //  --------------------------------------
     //  Scores
     //  --------------------------------------
@@ -89,7 +82,4 @@ public interface PickEmAPI {
     @POST("/api/scores/week")
     public void getScoresForWeek(@Field("token") String token, @Field("season") int season, @Field("week") int week, @Field("type") String type, Callback<Response<Highscores>> callback);
 
-    @FormUrlEncoded
-    @POST("/api/scores/teams")
-    public void getTeamScores(@Field("token") String token, Callback<Response<TeamScores>> callback);
 }

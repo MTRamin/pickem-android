@@ -15,7 +15,6 @@
  */
 package de.mtrstudios.nflpickem.Handlers;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -23,22 +22,17 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import de.mtrstudios.nflpickem.API.Data.Comparators.GamesComparator;
 import de.mtrstudios.nflpickem.API.Data.Game;
 import de.mtrstudios.nflpickem.API.Data.Highscore;
-import de.mtrstudios.nflpickem.API.Data.Pick;
 import de.mtrstudios.nflpickem.API.Data.Score;
-import de.mtrstudios.nflpickem.API.Data.TeamScore;
 import de.mtrstudios.nflpickem.API.Responses.Highscores;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
-import de.mtrstudios.nflpickem.R;
 
 /**
  * Class holding all the apps appData
@@ -53,28 +47,23 @@ public class PickEmDataHandler {
 
     // App Data
     private SeasonInfo seasonInfo;
-    private Map<String, Game> games;
+    private List<Game> games;
     private Map<Integer, Score> scoresByWeek;
     private List<Highscore> highscores;
-    private Map<String, String> picks;
     private Map<Integer, Integer> gamesPerWeek;
-    private Map<String, TeamScore> teamScores;
     private Map<Integer, Highscores> highscoresPerWeek;
 
     // Dates of last update calls
     private Calendar lastSeasonUpdate = new GregorianCalendar(2000, 0, 1);
     private Calendar lastDataUpdate = new GregorianCalendar(2000, 0, 1);
     private Calendar appStart = new GregorianCalendar();
-    private Calendar lastUpdateScores = new GregorianCalendar(2000, 0, 1);
 
 
     public PickEmDataHandler() {
         // Initialize collections
-        this.games = new HashMap<String, Game>();
+        this.games = new ArrayList<Game>();
         this.scoresByWeek = new TreeMap<Integer, Score>();
-        this.picks = new HashMap<String, String>();
         this.gamesPerWeek = new TreeMap<Integer, Integer>();
-        this.teamScores = new HashMap<String, TeamScore>();
         this.highscores = new ArrayList<Highscore>();
         this.highscoresPerWeek = new HashMap<Integer, Highscores>();
 
@@ -125,17 +114,9 @@ public class PickEmDataHandler {
         // Games
         String jsonGames = preferences.loadString(PickEmSharedPreferences.NAME_GAMES);
         if (!jsonGames.equals("null")) {
-            TypeToken<HashMap<String, Game>> typeToken = new TypeToken<HashMap<String, Game>>() {
+            TypeToken<List<Game>> typeToken = new TypeToken<List<Game>>() {
             };
             games = gson.fromJson(jsonGames, typeToken.getType());
-        }
-
-        // Picks
-        String jsonPicks = preferences.loadString(PickEmSharedPreferences.NAME_PICKS);
-        if (!jsonPicks.equals("null")) {
-            TypeToken<HashMap<String, String>> typeToken = new TypeToken<HashMap<String, String>>() {
-            };
-            picks = gson.fromJson(jsonPicks, typeToken.getType());
         }
 
         // Scores
@@ -154,14 +135,6 @@ public class PickEmDataHandler {
             gamesPerWeek = gson.fromJson(jsonGamesPerWeek, typeToken.getType());
         }
 
-        // TeamScores
-        String jsonTeamScores = preferences.loadString(PickEmSharedPreferences.NAME_TEAM_SCORES);
-        if (!jsonTeamScores.equals("null")) {
-            TypeToken<HashMap<String, TeamScore>> typeToken = new TypeToken<HashMap<String, TeamScore>>() {
-            };
-            teamScores = gson.fromJson(jsonTeamScores, typeToken.getType());
-        }
-
         // HighScores
         String jsonHighscores = preferences.loadString(PickEmSharedPreferences.NAME_HIGHSCORES);
         if (!jsonHighscores.equals("null")) {
@@ -172,38 +145,20 @@ public class PickEmDataHandler {
     }
 
     /**
-     * Clears the current appData that is shown to the user from the variables and the shared preferences
-     */
-    public void clearCurrentData() {
-        this.games.clear();
-        this.picks.clear();
-        this.highscores.clear();
-
-        PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance();
-        preferences.removeData(PickEmSharedPreferences.NAME_GAMES);
-        preferences.removeData(PickEmSharedPreferences.NAME_PICKS);
-        preferences.removeData(PickEmSharedPreferences.NAME_HIGHSCORES);
-    }
-
-    /**
      * If the season information has changed, this appData will be removed to reset the client
      */
-    public void seasonChanged() {
+    public void clearDataForRefresh() {
         this.games.clear();
-        this.picks.clear();
         this.gamesPerWeek.clear();
         this.scoresByWeek.clear();
         this.highscores.clear();
-        this.teamScores.clear();
 
         PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance();
 
         preferences.removeData(PickEmSharedPreferences.NAME_GAMES);
-        preferences.removeData(PickEmSharedPreferences.NAME_PICKS);
         preferences.removeData(PickEmSharedPreferences.NAME_HIGHSCORES);
         preferences.removeData(PickEmSharedPreferences.NAME_SCORES);
         preferences.removeData(PickEmSharedPreferences.NAME_GAMES_PER_WEEK);
-        preferences.removeData(PickEmSharedPreferences.NAME_TEAM_SCORES);
     }
 
     /**
@@ -214,11 +169,9 @@ public class PickEmDataHandler {
         this.userName = "null";
         this.userToken = "null";
         this.seasonInfo = null;
-        this.picks.clear();
         this.games.clear();
         this.scoresByWeek.clear();
         this.gamesPerWeek.clear();
-        this.teamScores.clear();
         this.highscores.clear();
 
         PickEmSharedPreferences preferences = PickEmSharedPreferences.getInstance();
@@ -229,12 +182,9 @@ public class PickEmDataHandler {
         preferences.removeData(PickEmSharedPreferences.NAME_LAST_SEASON_UPDATE);
         preferences.removeData(PickEmSharedPreferences.NAME_LAST_DATA_UPDATE);
         preferences.removeData(PickEmSharedPreferences.NAME_GAMES);
-        preferences.removeData(PickEmSharedPreferences.NAME_PICKS);
         preferences.removeData(PickEmSharedPreferences.NAME_HIGHSCORES);
         preferences.removeData(PickEmSharedPreferences.NAME_SCORES);
         preferences.removeData(PickEmSharedPreferences.NAME_GAMES_PER_WEEK);
-        preferences.removeData(PickEmSharedPreferences.NAME_TEAM_SCORES);
-
         this.lastSeasonUpdate = new GregorianCalendar(2000, 0, 1);
         this.lastDataUpdate = new GregorianCalendar(2000, 0, 1);
         this.appStart = new GregorianCalendar();
@@ -244,7 +194,7 @@ public class PickEmDataHandler {
      * Checks if appData about games is available
      */
     public boolean isDataAvailable() {
-        return ((this.seasonInfo != null) && (this.games.size() != 0));
+        return ((this.seasonInfo != null) && (this.games.size() > 0));
     }
 
     /**
@@ -255,19 +205,8 @@ public class PickEmDataHandler {
         PickEmSharedPreferences.getInstance().saveData(PickEmSharedPreferences.NAME_TOKEN, userToken);
     }
 
-    /**
-     * Adds a game to the app appData, updates appData about a game if it already exists
-     */
-    public void addData(Game game) {
-        games.put(game.getGamekey(), game);
-    }
-
-    /**
-     * Adds a pick to the apps appData
-     * If that pick already existed it will be updated
-     */
-    public void addData(Pick pick) {
-        picks.put(pick.getGamekey(), pick.getPick());
+    public void setGames(List<Game> games) {
+        this.games = games;
     }
 
     /**
@@ -287,17 +226,9 @@ public class PickEmDataHandler {
     }
 
     /**
-     * Saves appData about picks in the shared preferences
-     * The Collection is serialized into JSON format and stored as a string
-     */
-    public void savePicks() {
-        PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_PICKS, this.picks);
-    }
-
-    /**
      * Saves appData about games in a week into JSON format and stored as a string
      */
-    public void saveGamesPerWeek() {
+    private void saveGamesPerWeek() {
         PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_GAMES_PER_WEEK, this.gamesPerWeek);
     }
 
@@ -358,8 +289,14 @@ public class PickEmDataHandler {
 
     /**
      * Sets and stores the season info
+     * Checks if season Info has changed (week change/season change)
+     * and removes some data accordingly so it can be refreshed
      */
     public void setSeasonInfo(SeasonInfo seasonInfo) {
+        if ((this.seasonInfo == null) || (!seasonInfo.equals(this.seasonInfo))) {
+            clearDataForRefresh();
+        }
+
         this.seasonInfo = seasonInfo;
         PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_SEASON_INFO, this.seasonInfo);
     }
@@ -370,12 +307,11 @@ public class PickEmDataHandler {
     public List<Game> getGamesForSeason(SeasonInfo season) {
         List<Game> results = new ArrayList<Game>();
 
-        for (Map.Entry<String, Game> entry : games.entrySet()) {
-            if ((entry.getValue().getSeason() == season.getSeason()) && (entry.getValue().getWeek() == season.getWeek()) && (entry.getValue().getType().equals(season.getType()))) {
-                results.add(entry.getValue());
+        for (Game game : games) {
+            if ((game.getSeason() == season.getSeason()) && (game.getWeek() == season.getWeek()) && (game.getType().equals(season.getType()))) {
+                results.add(game);
             }
         }
-        Collections.sort(results, new GamesComparator());
 
         return results;
     }
@@ -398,40 +334,12 @@ public class PickEmDataHandler {
         PickEmSharedPreferences.getInstance().saveData(PickEmSharedPreferences.NAME_LAST_DATA_UPDATE, this.lastDataUpdate.getTimeInMillis());
     }
 
-    /**
-     * Gets the pick for a specific game indicated by its gamekey
-     */
-    public Pick getPickForGame(String gamekey) {
-        return new Pick(gamekey, picks.get(gamekey));
-    }
-
-    /**
-     * Gets the picks for a list of Games
-     */
-    public List<Pick> getPicksForGames(List<Game> games) {
-        List<Pick> results = new ArrayList<Pick>();
-
-        for (Game game : games) {
-            results.add(getPickForGame(game.getGamekey()));
-        }
-
-        return results;
-    }
-
     public List<Highscore> getHighscores() {
         return highscores;
     }
 
     public void setHighscores(List<Highscore> highscores) {
         this.highscores = highscores;
-    }
-
-    public Calendar getLastUpdateScores() {
-        return lastUpdateScores;
-    }
-
-    public void setLastUpdateScores(Calendar lastUpdateScores) {
-        this.lastUpdateScores = lastUpdateScores;
     }
 
     public Calendar getAppStart() {
@@ -454,8 +362,12 @@ public class PickEmDataHandler {
         return result;
     }
 
+    /**
+     * Sets and saves the games per week data
+     */
     public void setGamesPerWeek(Map<Integer, Integer> gamesPerWeek) {
         this.gamesPerWeek = gamesPerWeek;
+        saveGamesPerWeek();
     }
 
     /**
@@ -469,26 +381,6 @@ public class PickEmDataHandler {
             return 0;
         }
         return 0;
-    }
-
-    public Map<String, TeamScore> getTeamScores() {
-        return teamScores;
-    }
-
-    public void setTeamScores(Map<String, TeamScore> teamScores) {
-        this.teamScores = teamScores;
-        PickEmSharedPreferences.getInstance().saveJson(PickEmSharedPreferences.NAME_TEAM_SCORES, this.teamScores);
-    }
-
-    /**
-     * Gets the score for a specific team as a string
-     */
-    public String getScoreForTeam(String team) {
-        if (teamScores.containsKey(team)) {
-            return teamScores.get(team).getScoreNice();
-        } else {
-            return TeamScore.getScoreEmpty();
-        }
     }
 
     /**
@@ -514,7 +406,7 @@ public class PickEmDataHandler {
         return userToken;
     }
 
-    public Map<String, Game> getGames() {
+    public List<Game> getGames() {
         return games;
     }
 
@@ -524,9 +416,5 @@ public class PickEmDataHandler {
 
     public Calendar getLastDataUpdate() {
         return lastDataUpdate;
-    }
-
-    public Map<String, String> getPicks() {
-        return picks;
     }
 }

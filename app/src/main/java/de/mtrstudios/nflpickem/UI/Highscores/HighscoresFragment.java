@@ -32,19 +32,13 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 
 import de.mtrstudios.nflpickem.API.Data.Highscore;
-import de.mtrstudios.nflpickem.API.Response;
-import de.mtrstudios.nflpickem.API.Responses.Highscores;
-import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
-import de.mtrstudios.nflpickem.Events.Load.LoadHighscoresEvent;
-import de.mtrstudios.nflpickem.Events.Loaded.HighscoresLoadedEvent;
-import de.mtrstudios.nflpickem.Events.Loaded.UserScoresLoadedEvent;
-import de.mtrstudios.nflpickem.Handlers.ApiHandler;
+import de.mtrstudios.nflpickem.Events.Outgoing.LoadHighscoresEvent;
+import de.mtrstudios.nflpickem.Events.Return.HighscoresLoadedEvent;
+import de.mtrstudios.nflpickem.Events.Return.UserScoresLoadedEvent;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.BaseFragment;
 import de.mtrstudios.nflpickem.UI.PlayerStatistics.PlayerStatisticsActivity;
-import retrofit.Callback;
-import retrofit.RetrofitError;
 
 /**
  * Fragment that displays a highscore list.
@@ -278,7 +272,6 @@ public class HighscoresFragment extends BaseFragment {
 
     /**
      * Receives and handles the data to be shown
-     * Populates the ListView and other UI components
      */
     @Subscribe
     public void onHighscoresLoaded(HighscoresLoadedEvent event) {
@@ -287,7 +280,7 @@ public class HighscoresFragment extends BaseFragment {
 
     /**
      * Receives and handles an API error event
-     * Shows the Error indocator label in response to the error
+     * Shows the Error indicator label in response to the error
      */
     @Subscribe
     public void onApiError(ApiErrorEvent event) {

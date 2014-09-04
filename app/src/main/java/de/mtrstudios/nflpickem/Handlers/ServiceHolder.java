@@ -18,7 +18,9 @@ package de.mtrstudios.nflpickem.Handlers;
 import com.squareup.otto.Bus;
 
 import de.mtrstudios.nflpickem.API.PickEmAPI;
+import de.mtrstudios.nflpickem.Services.GamesDataLoaderService;
 import de.mtrstudios.nflpickem.Services.HighscoresService;
+import de.mtrstudios.nflpickem.Services.PickService;
 import de.mtrstudios.nflpickem.Services.PlayerStatisticsService;
 
 /**
@@ -33,6 +35,8 @@ public class ServiceHolder {
     // Services
     private PlayerStatisticsService playerStatisticsService;
     private HighscoresService highscoresService;
+    private GamesDataLoaderService gamesDataLoaderService;
+    private PickService pickService;
 
     public ServiceHolder() {
         createServices();
@@ -45,6 +49,8 @@ public class ServiceHolder {
     private void createServices() {
         playerStatisticsService = new PlayerStatisticsService(mApi, mBus);
         highscoresService = new HighscoresService(mApi, mBus);
+        gamesDataLoaderService = new GamesDataLoaderService(mApi, mBus);
+        pickService = new PickService(mApi, mBus);
     }
 
     /**
@@ -53,5 +59,7 @@ public class ServiceHolder {
     private void registerServices() {
         mBus.register(playerStatisticsService);
         mBus.register(highscoresService);
+        mBus.register(gamesDataLoaderService);
+        mBus.register(pickService);
     }
 }

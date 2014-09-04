@@ -13,37 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mtrstudios.nflpickem.Events.Loaded;
+package de.mtrstudios.nflpickem.Events.Return;
 
-import de.mtrstudios.nflpickem.API.Responses.Scores;
+import de.mtrstudios.nflpickem.API.Responses.Highscores;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 
 /**
- * Event sending Player Scores over event bus
+ * Event for loaded highscores
  */
-public class PlayerScoresLoadedEvent {
-    private final Scores scores;
-    private final String playerName;
-    private final int totalGamesPlayed;
+public class HighscoresLoadedEvent {
+    private final Highscores highscores;
+    private final int userRank;
+    private final boolean overallHighscores;
     private final SeasonInfo seasonInfo;
 
-    public PlayerScoresLoadedEvent(int totalGamesPlayed, String playerName, Scores scores, SeasonInfo seasonInfo) {
-        this.totalGamesPlayed = totalGamesPlayed;
-        this.playerName = playerName;
-        this.scores = scores;
+    public HighscoresLoadedEvent(Highscores highscores, int userRank, boolean overallHighscores, SeasonInfo seasonInfo) {
+        this.highscores = highscores;
+        this.userRank = userRank;
+        this.overallHighscores = overallHighscores;
         this.seasonInfo = seasonInfo;
     }
 
-    public Scores getScores() {
-        return scores;
+    public int getUserRank() {
+        return userRank;
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public Highscores getHighscores() {
+        return highscores;
     }
 
-    public int getTotalGamesPlayed() {
-        return totalGamesPlayed;
+    public boolean isOverallHighscores() {
+        return overallHighscores;
     }
 
     public SeasonInfo getSeasonInfo() {

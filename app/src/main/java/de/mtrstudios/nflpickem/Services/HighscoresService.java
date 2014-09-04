@@ -27,9 +27,9 @@ import de.mtrstudios.nflpickem.API.PickEmAPI;
 import de.mtrstudios.nflpickem.API.Response;
 import de.mtrstudios.nflpickem.API.Responses.Highscores;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
-import de.mtrstudios.nflpickem.Events.Load.LoadHighscoresEvent;
-import de.mtrstudios.nflpickem.Events.Loaded.HighscoresLoadedEvent;
-import de.mtrstudios.nflpickem.Events.Loaded.UserScoresLoadedEvent;
+import de.mtrstudios.nflpickem.Events.Return.HighscoresLoadedEvent;
+import de.mtrstudios.nflpickem.Events.Return.UserScoresLoadedEvent;
+import de.mtrstudios.nflpickem.Events.Outgoing.LoadHighscoresEvent;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
