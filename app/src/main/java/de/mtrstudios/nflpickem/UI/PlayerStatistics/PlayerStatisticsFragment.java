@@ -31,6 +31,8 @@ import com.squareup.otto.Subscribe;
 
 import java.util.Map;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.mtrstudios.nflpickem.API.Data.Score;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
 import de.mtrstudios.nflpickem.Events.Outgoing.LoadPlayerScoresEvent;
@@ -45,13 +47,13 @@ import de.mtrstudios.nflpickem.UI.BaseFragment;
 public class PlayerStatisticsFragment extends BaseFragment {
     private OnFragmentInteractionListener mListener;
 
-    private PlayerStatisticsListAdapter adapter;
+    private PlayerStatisticsListAdapter mAdapter;
+    private String mPlayerName;
 
-    private String playerName;
-
-    private TextView viewUsername;
-    private TextView viewScore;
-    private TextView viewMaxScore;
+    @InjectView(R.id.statsListView) ListView listView;
+    @InjectView(R.id.username) TextView viewUsername;
+    @InjectView(R.id.userScore) TextView viewScore;
+    @InjectView(R.id.possibleMaxScore) TextView viewMaxScore;
 
     /**
      * Use this factory method to create a new instance of
@@ -78,17 +80,17 @@ public class PlayerStatisticsFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.playerName = getString(R.string.stats_username);
+        mPlayerName = getString(R.string.stats_username);
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
-            this.playerName = bundle.getString(PlayerStatisticsActivity.EXTRA_USER_NAME);
+            mPlayerName = bundle.getString(PlayerStatisticsActivity.EXTRA_USER_NAME);
         }
 
         // Change ActionBar title to the userName
         ActionBar actionBar = getActivity().getActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(this.playerName);
+            actionBar.setTitle(mPlayerName);
         }
     }
 
@@ -98,15 +100,11 @@ public class PlayerStatisticsFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_player_statistics, container, false);
 
-        // Set up ListView and its Adapter with the correct appData
-        ListView listView = (ListView) rootView.findViewById(R.id.statsListView);
-        adapter = new PlayerStatisticsListAdapter((PlayerStatisticsActivity) this.getActivity());
-        listView.setAdapter(adapter);
+        ButterKnife.inject(this, rootView);
 
-        viewUsername = (TextView) rootView.findViewById(R.id.username);
-        viewUsername.setText(this.playerName);
-        viewScore = (TextView) rootView.findViewById(R.id.userScore);
-        viewMaxScore = (TextView) rootView.findViewById(R.id.possibleMaxScore);
+        viewUsername.setText(mPlayerName);
+        mAdapter = new PlayerStatisticsListAdapter((PlayerStatisticsActivity) getActivity());
+        listView.setAdapter(mAdapter);
 
         return rootView;
     }
@@ -117,12 +115,6 @@ public class PlayerStatisticsFragment extends BaseFragment {
 
         getUserScoresData();
 
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -160,7 +152,7 @@ public class PlayerStatisticsFragment extends BaseFragment {
      * Posts the event to retrieve the necessary score data that should be displayed
      */
     private void getUserScoresData() {
-        mBus.post(new LoadPlayerScoresEvent(this.playerName));
+        mBus.post(new LoadPlayerScoresEvent(mPlayerName));
     }
 
     /**
@@ -172,14 +164,13 @@ public class PlayerStatisticsFragment extends BaseFragment {
     public void onPlayerScoresLoaded(PlayerScoresLoadedEvent event) {
         Map<Integer, Score> scores = event.getScores().getScoresAsMap();
 
-        adapter.setSeasonInfo(event.getSeasonInfo());
-        adapter.setPlayerName(event.getPlayerName());
+        // Set adapter data and notify data changed
+        mAdapter.setSeasonInfo(event.getSeasonInfo());
+        mAdapter.setPlayerName(event.getPlayerName());
+        mAdapter.setScores(scores);
+        mAdapter.setMaxScore(event.getTotalGamesPlayed());
 
-        for (int key : scores.keySet()) {
-            adapter.addData(scores.get(key));
-        }
-        adapter.notifyDataSetChanged();
-
+        // Set UI components
         viewScore.setText(String.valueOf(event.getScores().getTotalScore()));
         viewMaxScore.setText(String.valueOf(event.getTotalGamesPlayed()));
     }

@@ -77,9 +77,6 @@ public class PlayerStatisticsService extends LoaderService {
                     mBus.post(new ApiErrorEvent(error));
                 }
             });
-
         }
-
     }
-
 }

@@ -58,8 +58,9 @@ public class SeasonInfo implements Parcelable {
 
         if (season != that.season) return false;
         if (week != that.week) return false;
-        return !(type != null ? !type.equals(that.type) : that.type != null);
+        if (type != that.type) return false;
 
+        return true;
     }
 
     public int getSeason() {

@@ -29,6 +29,9 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.mtrstudios.nflpickem.API.Data.Score;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
@@ -41,28 +44,29 @@ import de.mtrstudios.nflpickem.UI.Games.GamesActivity;
  */
 public class PlayerStatisticsListAdapter extends BaseAdapter {
 
-    private PlayerStatisticsActivity parent;
+    private PlayerStatisticsActivity mParent;
 
-    private SeasonInfo seasonInfo;
-    private String playerName;
+    private SeasonInfo mSeasonInfo;
+    private String mPlayerName;
+    private int mMaxScore;
 
-    private Map<Integer, Score> scores = new HashMap<Integer, Score>();
+    private Map<Integer, Score> mScores = new HashMap<Integer, Score>();
 
     public PlayerStatisticsListAdapter(PlayerStatisticsActivity parent) {
-        this.parent = parent;
+        mParent = parent;
     }
 
     @Override
     public int getCount() {
-        if (seasonInfo != null) {
-            return seasonInfo.getWeek();
+        if (mSeasonInfo != null) {
+            return mSeasonInfo.getWeek();
         }
         return 0;
     }
 
     @Override
     public Object getItem(int i) {
-        return scores.get(i);
+        return mScores.get(i);
     }
 
     @Override
@@ -76,7 +80,7 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
 
         if (view == null) {
             // Inflate Layout
-            LayoutInflater inflater = this.parent.getLayoutInflater();
+            LayoutInflater inflater = mParent.getLayoutInflater();
             view = inflater.inflate(R.layout.row_score, viewGroup, false);
 
             // Set up ViewHolder
@@ -96,94 +100,75 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
      */
     private void createView(int position, ScoresViewHolder viewHolder) {
         int week = position + 1;
-        final SeasonInfo rowSeason = new SeasonInfo(this.seasonInfo.getSeason(), week, this.seasonInfo.getType());
+        final SeasonInfo rowSeason = new SeasonInfo(mSeasonInfo.getSeason(), week, mSeasonInfo.getType());
 
-        if ((scores != null) && (scores.size() != 0)) {
-            int score = 0;
-            int maxScore = PickEmDataHandler.getInstance().getGamesCountForWeek(rowSeason);
-            int percentage = 0;
-
-            // Calculate percentage of correct picks
-            if (scores.containsKey(week)) {
-                Score currentScore = scores.get(week);
-
-                score = currentScore.getScore();
-
-                if (maxScore > 0) {
-                    percentage = (int) (((float) score / (float) maxScore) * 100);
-                }
-            }
+        if ((mScores != null) && (mScores.size() != 0)) {
+            final int score = mScores.get(week).getScore();
+            final int maxScore = mMaxScore;
+            final int percentage = (int) (((float) score / (float) maxScore) * 100);
 
             // Set appData
             viewHolder.weekNumber.setText(String.valueOf(rowSeason.getWeek()));
-            viewHolder.weekPercentage.setText(String.valueOf(percentage) + parent.getString(R.string.percent));
+            viewHolder.weekPercentage.setText(String.valueOf(percentage) + mParent.getString(R.string.percent));
 
             viewHolder.weekScore.setText(String.valueOf(score));
             viewHolder.weekMaxScore.setText(String.valueOf(maxScore));
 
             // Set onClickListener to show detailed information about picks via the GamesActivity
             // Override transitions with custom activity animations
-            final int finalScore = score;
             viewHolder.weekItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(parent, GamesActivity.class);
-                    intent.putExtra(GamesActivity.EXTRA_PLAYER_NAME, playerName);
+                    Intent intent = new Intent(mParent, GamesActivity.class);
+                    intent.putExtra(GamesActivity.EXTRA_PLAYER_NAME, mPlayerName);
                     intent.putExtra(GamesActivity.EXTRA_SEASON_INFO, rowSeason);
-                    intent.putExtra(GamesActivity.EXTRA_WEEK_SCORE, finalScore);
-                    parent.startActivity(intent);
-                    parent.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    intent.putExtra(GamesActivity.EXTRA_WEEK_SCORE, score);
+                    mParent.startActivity(intent);
+                    mParent.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
                 }
             });
 
             // Change arrow color and set it to the ImageView
-            Drawable arrow = parent.getResources().getDrawable(R.drawable.next);
-            arrow.setColorFilter(parent.getResources().getColor(R.color.secondary_base), PorterDuff.Mode.SRC_ATOP);
+            Drawable arrow = mParent.getResources().getDrawable(R.drawable.next);
+            arrow.setColorFilter(mParent.getResources().getColor(R.color.secondary_base), PorterDuff.Mode.SRC_ATOP);
             viewHolder.weekArrow.setImageDrawable(arrow);
         }
     }
 
-    /**
-     * Adds score appData and updates it if it was already in there
-     */
-    public void addData(Score score) {
-        scores.put(score.getWeek(), score);
+    public void setScores(Map<Integer, Score> scores) {
+        mScores.clear();
+        mScores.putAll(scores);
+        notifyDataSetChanged();
     }
 
     public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+        mPlayerName = playerName;
     }
 
     public void setSeasonInfo(SeasonInfo seasonInfo) {
-        this.seasonInfo = seasonInfo;
-        notifyDataSetChanged();
+        mSeasonInfo = seasonInfo;
+    }
+
+    public void setMaxScore(int maxScore) {
+        mMaxScore = maxScore;
     }
 
     /**
      * ViewHolder to reference the views used by a row of Player Statistics
      */
     static class ScoresViewHolder {
-        protected View weekItem;
+        @InjectView(R.id.weekItem) View weekItem;
 
-        protected ImageView weekArrow;
+        @InjectView(R.id.imageArrow) ImageView weekArrow;
 
-        protected TextView weekNumber;
-
-        protected TextView weekPercentage;
-        protected TextView weekScore;
-        protected TextView weekMaxScore;
+        @InjectView(R.id.textWeekNumber) TextView weekNumber;
+        @InjectView(R.id.textWeekPercentage) TextView weekPercentage;
+        @InjectView(R.id.textWeekScore) TextView weekScore;
+        @InjectView(R.id.textWeekMaxScore) TextView weekMaxScore;
 
         ScoresViewHolder(View itemView) {
-            this.weekItem = itemView.findViewById(R.id.weekItem);
-
-            this.weekArrow = (ImageView) itemView.findViewById(R.id.imageArrow);
-
-            this.weekNumber = (TextView) itemView.findViewById(R.id.textWeekNumber);
-
-            this.weekPercentage = (TextView) itemView.findViewById(R.id.textWeekPercentage);
-            this.weekScore = (TextView) itemView.findViewById(R.id.textWeekScore);
-            this.weekMaxScore = (TextView) itemView.findViewById(R.id.textWeekMaxScore);
+            ButterKnife.inject(this, itemView);
         }
     }
 }

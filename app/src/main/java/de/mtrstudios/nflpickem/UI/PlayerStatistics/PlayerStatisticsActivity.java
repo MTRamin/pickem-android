@@ -35,7 +35,6 @@ import de.mtrstudios.nflpickem.UI.Settings.SettingsActivity;
 public class PlayerStatisticsActivity extends BaseActivity implements PlayerStatisticsFragment.OnFragmentInteractionListener {
 
     public static final String EXTRA_USER_NAME = "user_name";
-    private PickEmApplication application;
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -46,8 +45,6 @@ public class PlayerStatisticsActivity extends BaseActivity implements PlayerStat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_stats);
-
-        application = (PickEmApplication) getApplication();
 
         // Receive intent with username information
         Intent intent = getIntent();

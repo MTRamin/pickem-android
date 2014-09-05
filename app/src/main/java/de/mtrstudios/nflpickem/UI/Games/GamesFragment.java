@@ -107,7 +107,7 @@ public class GamesFragment extends BaseFragment {
             this.score = bundle.getInt(GamesActivity.EXTRA_WEEK_SCORE);
         }
 
-        String title = (this.seasonInfo != null) ? R.string.week + " " + this.seasonInfo.getWeek() : getString(R.string.current_week);
+        String title = (this.seasonInfo != null) ? getString(R.string.week) + " " + this.seasonInfo.getWeek() : getString(R.string.current_week);
         getActivity().getActionBar().setTitle(title);
     }
 

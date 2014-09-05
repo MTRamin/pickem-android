@@ -20,6 +20,7 @@ import android.os.Bundle;
 
 import com.squareup.otto.Bus;
 
+import butterknife.ButterKnife;
 import de.mtrstudios.nflpickem.Handlers.BusHandler;
 import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 
@@ -52,5 +53,12 @@ public class BaseFragment extends Fragment {
         super.onPause();
 
         mBus.unregister(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        ButterKnife.reset(this);
     }
 }
