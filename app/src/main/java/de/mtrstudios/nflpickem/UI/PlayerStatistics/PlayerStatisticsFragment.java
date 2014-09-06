@@ -50,14 +50,10 @@ public class PlayerStatisticsFragment extends BaseFragment {
     private PlayerStatisticsListAdapter mAdapter;
     private String mPlayerName;
 
-    @InjectView(R.id.statsListView)
-    ListView listView;
-    @InjectView(R.id.username)
-    TextView viewUsername;
-    @InjectView(R.id.userScore)
-    TextView viewScore;
-    @InjectView(R.id.possibleMaxScore)
-    TextView viewMaxScore;
+    @InjectView(R.id.statsListView) ListView listView;
+    @InjectView(R.id.username) TextView viewUsername;
+    @InjectView(R.id.userScore) TextView viewScore;
+    @InjectView(R.id.possibleMaxScore) TextView viewMaxScore;
 
     /**
      * Use this factory method to create a new instance of

@@ -160,20 +160,14 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
      * ViewHolder to reference the views used by a row of Player Statistics
      */
     static class ScoresViewHolder {
-        @InjectView(R.id.weekItem)
-        View weekItem;
+        @InjectView(R.id.weekItem) View weekItem;
 
-        @InjectView(R.id.imageArrow)
-        ImageView weekArrow;
+        @InjectView(R.id.imageArrow) ImageView weekArrow;
 
-        @InjectView(R.id.textWeekNumber)
-        TextView weekNumber;
-        @InjectView(R.id.textWeekPercentage)
-        TextView weekPercentage;
-        @InjectView(R.id.textWeekScore)
-        TextView weekScore;
-        @InjectView(R.id.textWeekMaxScore)
-        TextView weekMaxScore;
+        @InjectView(R.id.textWeekNumber) TextView weekNumber;
+        @InjectView(R.id.textWeekPercentage) TextView weekPercentage;
+        @InjectView(R.id.textWeekScore) TextView weekScore;
+        @InjectView(R.id.textWeekMaxScore) TextView weekMaxScore;
 
         ScoresViewHolder(View itemView) {
             ButterKnife.inject(this, itemView);

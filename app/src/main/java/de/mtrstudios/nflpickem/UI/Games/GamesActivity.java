@@ -23,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
-import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.BaseActivity;
 import de.mtrstudios.nflpickem.UI.Highscores.HighscoresActivity;

@@ -36,15 +36,14 @@ import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import de.mtrstudios.nflpickem.API.Data.Game;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
+import de.mtrstudios.nflpickem.Events.Outgoing.LoadGamesDataEvent;
+import de.mtrstudios.nflpickem.Events.Outgoing.SendPickEvent;
 import de.mtrstudios.nflpickem.Events.Return.GamesDataLoadedEvent;
 import de.mtrstudios.nflpickem.Events.Return.PickSentEvent;
 import de.mtrstudios.nflpickem.Events.Return.SeasonStatisticsLoadedEvent;
-import de.mtrstudios.nflpickem.Events.Outgoing.LoadGamesDataEvent;
-import de.mtrstudios.nflpickem.Events.Outgoing.SendPickEvent;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.BaseFragment;
 import de.mtrstudios.nflpickem.UI.PlayerStatistics.PlayerStatisticsActivity;
