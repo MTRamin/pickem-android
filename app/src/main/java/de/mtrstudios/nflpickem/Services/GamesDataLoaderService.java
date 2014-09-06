@@ -32,9 +32,9 @@ import de.mtrstudios.nflpickem.API.Responses.GamesPerWeek;
 import de.mtrstudios.nflpickem.API.Responses.Scores;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
+import de.mtrstudios.nflpickem.Events.Outgoing.LoadGamesDataEvent;
 import de.mtrstudios.nflpickem.Events.Return.GamesDataLoadedEvent;
 import de.mtrstudios.nflpickem.Events.Return.SeasonStatisticsLoadedEvent;
-import de.mtrstudios.nflpickem.Events.Outgoing.LoadGamesDataEvent;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 

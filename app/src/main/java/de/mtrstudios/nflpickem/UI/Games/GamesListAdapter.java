@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.mtrstudios.nflpickem.API.Data.Comparators.GamesComparator;
 import de.mtrstudios.nflpickem.API.Data.Game;
 import de.mtrstudios.nflpickem.NFLTeams;
@@ -45,27 +47,27 @@ import de.mtrstudios.nflpickem.R;
  */
 public class GamesListAdapter extends BaseAdapter {
 
-    private Context context;
-    private GamesFragment fragment;
+    private Context mContext;
+    private GamesFragment mFragment;
 
     // Data
-    private List<Game> games = new ArrayList<Game>();
-    private boolean pickingEnabled = false;
+    private List<Game> mGames = new ArrayList<Game>();
+    private boolean mPickingEnabled = false;
 
     public GamesListAdapter(Context context, GamesFragment fragment) {
-        this.context = context;
-        this.fragment = fragment;
+        this.mContext = context;
+        this.mFragment = fragment;
     }
 
 
     @Override
     public int getCount() {
-        return games.size();
+        return mGames.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return games.get(i);
+        return mGames.get(i);
     }
 
     @Override
@@ -80,7 +82,7 @@ public class GamesListAdapter extends BaseAdapter {
 
         if (convertView == null) {
             // Inflate Layout
-            LayoutInflater inflater = ((GamesActivity) this.context).getLayoutInflater();
+            LayoutInflater inflater = mFragment.getActivity().getLayoutInflater();
             convertView = inflater.inflate(R.layout.row_game, parent, false);
 
             // Set up ViewHolder
@@ -98,102 +100,100 @@ public class GamesListAdapter extends BaseAdapter {
      * Creates and populates the views for one row of appData
      */
     private void createView(int position, final GameViewHolder viewHolder) {
-        final Game game = games.get(position);
+        final Game game = mGames.get(position);
 
-        if (games.size() > 0) {
-            // Reset some values and hide some elements that will only be shown on certain conditions
-            viewHolder.gamePostKickoffIndicator.setBackgroundColor(Color.TRANSPARENT);
-            viewHolder.homePickIndicator.setBackground(null);
-            viewHolder.awayPickIndicator.setBackground(null);
-            viewHolder.homeIcon.setImageBitmap(null);
-            viewHolder.awayIcon.setImageBitmap(null);
-            viewHolder.homeScore.setVisibility(View.INVISIBLE);
-            viewHolder.awayScore.setVisibility(View.INVISIBLE);
-            viewHolder.homePickIndicator.setVisibility(View.INVISIBLE);
-            viewHolder.awayPickIndicator.setVisibility(View.INVISIBLE);
+        // Reset some values and hide some elements that will only be shown on certain conditions
+        viewHolder.gamePostKickoffIndicator.setBackgroundColor(Color.TRANSPARENT);
+        viewHolder.homePickIndicator.setBackground(null);
+        viewHolder.awayPickIndicator.setBackground(null);
+        viewHolder.homeIcon.setImageBitmap(null);
+        viewHolder.awayIcon.setImageBitmap(null);
+        viewHolder.homeScore.setVisibility(View.INVISIBLE);
+        viewHolder.awayScore.setVisibility(View.INVISIBLE);
+        viewHolder.homePickIndicator.setVisibility(View.INVISIBLE);
+        viewHolder.awayPickIndicator.setVisibility(View.INVISIBLE);
 
-            // Set Team Names
-            viewHolder.homeName.setText(game.getHomeTeam());
-            viewHolder.awayName.setText(game.getAwayTeam());
+        // Set Team Names
+        viewHolder.homeName.setText(game.getHomeTeam());
+        viewHolder.awayName.setText(game.getAwayTeam());
 
-            // Set Game time and vs text
-            viewHolder.gameTime.setText(game.getKickoffParsed(context));
-            viewHolder.vs.setText(context.getString(R.string.vs));
+        // Set Game time and vs text
+        viewHolder.gameTime.setText(game.getKickoffParsed(mContext));
+        viewHolder.vs.setText(mContext.getString(R.string.vs));
 
-            // Load team logos with picasso into the imageViews
-            Picasso.with(context).load(NFLTeams.getLogoForTeam(game.getHomeTeam())).into(viewHolder.homeIcon);
-            Picasso.with(context).load(NFLTeams.getLogoForTeam(game.getAwayTeam())).into(viewHolder.awayIcon);
+        // Load team logos with picasso into the imageViews
+        Picasso.with(mContext).load(NFLTeams.getLogoForTeam(game.getHomeTeam())).into(viewHolder.homeIcon);
+        Picasso.with(mContext).load(NFLTeams.getLogoForTeam(game.getAwayTeam())).into(viewHolder.awayIcon);
 
-            // Set team scores (w-l-t)
-            viewHolder.homeTeamScore.setText(game.getHomeTeamSeasonScore(context));
-            viewHolder.awayTeamScore.setText(game.getAwayTeamSeasonScore(context));
+        // Set team scores (w-l-t)
+        viewHolder.homeTeamScore.setText(game.getHomeTeamSeasonScore(mContext));
+        viewHolder.awayTeamScore.setText(game.getAwayTeamSeasonScore(mContext));
 
-            // Set default color for pick indicators
-            viewHolder.homePickIndicator.setBackgroundColor(context.getResources().getColor(R.color.third_lighter));
-            viewHolder.awayPickIndicator.setBackgroundColor(context.getResources().getColor(R.color.third_lighter));
+        // Set default color for pick indicators
+        viewHolder.homePickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.third_lighter));
+        viewHolder.awayPickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.third_lighter));
 
-            if (!game.isPreGame()) { // Game has started or is finished
-                viewHolder.homeTeam.setClickable(false);
-                viewHolder.awayTeam.setClickable(false);
+        if (!game.isPreGame()) { // Game has started or is finished
+            viewHolder.homeTeam.setClickable(false);
+            viewHolder.awayTeam.setClickable(false);
 
-                // Change background of row and show the score of the game
-                viewHolder.gamePostKickoffIndicator.setBackgroundColor(context.getResources().getColor(R.color.game_post_kickoff));
-                viewHolder.vs.setText(context.getString(R.string.list_pick_score_divider));
-                viewHolder.homeScore.setText(String.valueOf(game.getHomeScore()));
-                viewHolder.awayScore.setText(String.valueOf(game.getAwayScore()));
-                viewHolder.homeScore.setVisibility(View.VISIBLE);
-                viewHolder.awayScore.setVisibility(View.VISIBLE);
+            // Change background of row and show the score of the game
+            viewHolder.gamePostKickoffIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.game_post_kickoff));
+            viewHolder.vs.setText(mContext.getString(R.string.list_pick_score_divider));
+            viewHolder.homeScore.setText(String.valueOf(game.getHomeScore()));
+            viewHolder.awayScore.setText(String.valueOf(game.getAwayScore()));
+            viewHolder.homeScore.setVisibility(View.VISIBLE);
+            viewHolder.awayScore.setVisibility(View.VISIBLE);
 
-                // Set pick indicator
-                if (game.getPick() != null) {
-                    if (game.isPostGame()) { // Game has ended
-                        // Show correct / wrong pick indicators and animate them in
-                        if (game.getPick().equals("HOME")) {
-                            if (game.getWinner().equals("HOME")) {
-                                viewHolder.homePickIndicator.setBackgroundColor(context.getResources().getColor(R.color.alternative_base));
-                            } else {
-                                viewHolder.homePickIndicator.setBackgroundColor(context.getResources().getColor(R.color.primary_lighter));
-                            }
+            // Set pick indicator
+            if (game.getPick() != null) {
+                if (game.isPostGame()) { // Game has ended
+                    // Show correct / wrong pick indicators and animate them in
+                    if (game.getPick().equals("HOME")) {
+                        if (game.getWinner().equals("HOME")) {
+                            viewHolder.homePickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.alternative_base));
+                        } else {
+                            viewHolder.homePickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.primary_lighter));
                         }
+                    }
 
-                        if (game.getPick().equals("AWAY")) {
-                            if (game.getWinner().equals("HOME")) {
-                                viewHolder.awayPickIndicator.setBackgroundColor(context.getResources().getColor(R.color.primary_lighter));
-                            } else {
-                                viewHolder.awayPickIndicator.setBackgroundColor(context.getResources().getColor(R.color.alternative_base));
-                            }
+                    if (game.getPick().equals("AWAY")) {
+                        if (game.getWinner().equals("HOME")) {
+                            viewHolder.awayPickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.primary_lighter));
+                        } else {
+                            viewHolder.awayPickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.alternative_base));
                         }
                     }
                 }
             }
+        }
 
-            // Animate the correct pick indicator to slowly show it to the user
-            if (game.getPick() != null) {
-                if (game.getPick().equals("HOME")) {
-                    pickAnimation(viewHolder.homePickIndicator, true);
-                }
-
-                if (game.getPick().equals("AWAY")) {
-                    pickAnimation(viewHolder.awayPickIndicator, false);
-                }
+        // Animate the correct pick indicator to slowly show it to the user
+        if (game.getPick() != null) {
+            if (game.getPick().equals("HOME")) {
+                pickAnimation(viewHolder.homePickIndicator, true);
             }
 
-            // Set OnClickListeners to pick games
-            viewHolder.homeTeam.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pick("HOME", game, viewHolder);
-                }
-            });
-
-            // Set OnClickListeners to pick games
-            viewHolder.awayTeam.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pick("AWAY", game, viewHolder);
-                }
-            });
+            if (game.getPick().equals("AWAY")) {
+                pickAnimation(viewHolder.awayPickIndicator, false);
+            }
         }
+
+        // Set OnClickListeners to pick games
+        viewHolder.homeTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pick("HOME", game, viewHolder);
+            }
+        });
+
+        // Set OnClickListeners to pick games
+        viewHolder.awayTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pick("AWAY", game, viewHolder);
+            }
+        });
     }
 
     /**
@@ -203,10 +203,10 @@ public class GamesListAdapter extends BaseAdapter {
     private void pick(String pick, Game game, GameViewHolder viewHolder) {
         String currentPick = game.getPick();
 
-        boolean needToSubmitPick = this.pickingEnabled && ((currentPick == null) || (!currentPick.equals(pick))) && (game.getQuarter().equals("P"));
+        boolean needToSubmitPick = mPickingEnabled && ((currentPick == null) || (!currentPick.equals(pick))) && (game.getQuarter().equals("P"));
 
         if (needToSubmitPick) {
-            fragment.submitPick(pick, game, viewHolder);
+            mFragment.submitPick(pick, game, viewHolder);
         }
     }
 
@@ -291,62 +291,42 @@ public class GamesListAdapter extends BaseAdapter {
     public void addGames(List<Game> newGames) {
         Collections.sort(newGames, new GamesComparator());
 
-        this.games.clear();
-        this.games.addAll(newGames);
+        this.mGames.clear();
+        this.mGames.addAll(newGames);
     }
 
     public void setPickingEnabled(boolean pickingEnabled) {
-        this.pickingEnabled = pickingEnabled;
+        this.mPickingEnabled = pickingEnabled;
     }
 
     /**
      * ViewHolder for all the views of a row that displays the game and pick information
      */
     public static class GameViewHolder {
-        protected TextView homeName;
-        protected TextView awayName;
+        @InjectView(R.id.textHomeName) TextView homeName;
+        @InjectView(R.id.textAwayName) TextView awayName;
 
-        protected TextView homeScore;
-        protected TextView awayScore;
+        @InjectView(R.id.textHomeScore) TextView homeScore;
+        @InjectView(R.id.textAwayScore) TextView awayScore;
 
-        protected TextView homeTeamScore;
-        protected TextView awayTeamScore;
+        @InjectView(R.id.textHomeTeamScore) TextView homeTeamScore;
+        @InjectView(R.id.textAwayTeamScore) TextView awayTeamScore;
 
-        protected TextView vs;
-        protected TextView gameTime;
+        @InjectView(R.id.textvs) TextView vs;
+        @InjectView(R.id.textGameTime) TextView gameTime;
 
-        protected ImageView homeIcon;
-        protected ImageView awayIcon;
+        @InjectView(R.id.imageHome) ImageView homeIcon;
+        @InjectView(R.id.imageAway) ImageView awayIcon;
 
-        protected View homeTeam;
-        protected View awayTeam;
+        @InjectView(R.id.homeTeam) View homeTeam;
+        @InjectView(R.id.awayTeam) View awayTeam;
 
-        protected View homePickIndicator;
-        protected View awayPickIndicator;
-        protected ViewGroup gamePostKickoffIndicator;
+        @InjectView(R.id.homePickIndicator) View homePickIndicator;
+        @InjectView(R.id.awayPickIndicator) View awayPickIndicator;
+        @InjectView(R.id.background) ViewGroup gamePostKickoffIndicator;
 
         GameViewHolder(View itemView) {
-            this.homeName = (TextView) itemView.findViewById(R.id.textHomeName);
-            this.awayName = (TextView) itemView.findViewById(R.id.textAwayName);
-
-            this.homeScore = (TextView) itemView.findViewById(R.id.textHomeScore);
-            this.awayScore = (TextView) itemView.findViewById(R.id.textAwayScore);
-
-            this.homeTeamScore = (TextView) itemView.findViewById(R.id.textHomeTeamScore);
-            this.awayTeamScore = (TextView) itemView.findViewById(R.id.textAwayTeamScore);
-
-            this.vs = (TextView) itemView.findViewById(R.id.textvs);
-            this.gameTime = (TextView) itemView.findViewById(R.id.textGameTime);
-
-            this.homeIcon = (ImageView) itemView.findViewById(R.id.imageHome);
-            this.awayIcon = (ImageView) itemView.findViewById(R.id.imageAway);
-
-            this.homeTeam = itemView.findViewById(R.id.homeTeam);
-            this.awayTeam = itemView.findViewById(R.id.awayTeam);
-
-            this.homePickIndicator = itemView.findViewById(R.id.homePickIndicator);
-            this.awayPickIndicator = itemView.findViewById(R.id.awayPickIndicator);
-            this.gamePostKickoffIndicator = (ViewGroup) itemView.findViewById(R.id.background);
+            ButterKnife.inject(this, itemView);
         }
     }
 }

@@ -29,6 +29,8 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.BaseActivity;
 import de.mtrstudios.nflpickem.UI.Login.LoginActivity;
@@ -54,7 +56,7 @@ public class HighscoresActivity extends BaseActivity implements ActionBar.TabLis
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    ViewPager mViewPager;
+    @InjectView(R.id.pager) ViewPager mViewPager;
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -64,11 +66,9 @@ public class HighscoresActivity extends BaseActivity implements ActionBar.TabLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_highscores);
 
-        if (savedInstanceState == null) {
-        }
+        ButterKnife.inject(this);
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -83,7 +83,6 @@ public class HighscoresActivity extends BaseActivity implements ActionBar.TabLis
         mSectionsPagerAdapter.setWeeks(appData.getSeasonInfo().getWeek());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         // When swiping between different sections, select the corresponding
@@ -170,7 +169,7 @@ public class HighscoresActivity extends BaseActivity implements ActionBar.TabLis
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        private int weeks;
+        private int mWeeks;
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -178,7 +177,7 @@ public class HighscoresActivity extends BaseActivity implements ActionBar.TabLis
 
 
         public void setWeeks(int weeks) {
-            this.weeks = weeks;
+            mWeeks = weeks;
         }
 
         @Override
@@ -187,7 +186,7 @@ public class HighscoresActivity extends BaseActivity implements ActionBar.TabLis
 
             int week = 0;
             if (position != 0) {
-                week = weeks - (position - 1);
+                week = mWeeks - (position - 1);
             }
 
             return HighscoresFragment.newInstance(week);
@@ -196,7 +195,7 @@ public class HighscoresActivity extends BaseActivity implements ActionBar.TabLis
         @Override
         public int getCount() {
             // Show pages = number of current week + overall page
-            return weeks + 1;
+            return mWeeks + 1;
         }
 
         @Override
@@ -206,7 +205,7 @@ public class HighscoresActivity extends BaseActivity implements ActionBar.TabLis
                 case 0:
                     return getString(R.string.highscores_overall);
                 default:
-                    int weekNumber = weeks - (position - 1);
+                    int weekNumber = mWeeks - (position - 1);
                     return getString(R.string.week) + " " + weekNumber;
             }
         }

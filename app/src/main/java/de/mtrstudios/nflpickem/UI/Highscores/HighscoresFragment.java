@@ -31,6 +31,8 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.mtrstudios.nflpickem.API.Data.Highscore;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
 import de.mtrstudios.nflpickem.Events.Outgoing.LoadHighscoresEvent;
@@ -50,21 +52,26 @@ public class HighscoresFragment extends BaseFragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private HighscoresActivity parent;
-    private HighscoresListAdapter adapter;
-
-    private View statsView;
-    private View errorView;
+    private HighscoresActivity mParent;
+    private HighscoresListAdapter mAdapter;
 
     // Week the fragment displays (0 if overall highscores)
-    private int weekNumber;
+    private int mWeekNumber;
 
-    private TextView viewUserRank;
-    private TextView viewUserName;
-    private TextView viewUserScore;
-    private TextView viewMaxScore;
+    // Inject all views
+    @InjectView(R.id.userstats) View statsView;
 
-    private TextView backgroundText;
+    @InjectView(R.id.updateError) View errorView;
+    @InjectView(R.id.textPicksDisabled) TextView errorReason;
+
+    @InjectView(R.id.highscoreListView) ListView listView;
+
+    @InjectView(R.id.userRank) TextView viewUserRank;
+    @InjectView(R.id.username) TextView viewUserName;
+    @InjectView(R.id.userScore) TextView viewUserScore;
+    @InjectView(R.id.possibleMaxScore) TextView viewMaxScore;
+
+    @InjectView(R.id.emptyText) TextView backgroundText;
 
     /**
      * Use this factory method to create a new instance of
@@ -89,13 +96,13 @@ public class HighscoresFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.parent = (HighscoresActivity) this.getActivity();
+        this.mParent = (HighscoresActivity) getActivity();
 
-        this.weekNumber = 0;
+        this.mWeekNumber = 0;
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
-            weekNumber = bundle.getInt(BUNDLE_INT, 0);
+            mWeekNumber = bundle.getInt(BUNDLE_INT, 0);
         }
     }
 
@@ -105,24 +112,12 @@ public class HighscoresFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_highscores, container, false);
 
+        // Inject ButterKnife
+        ButterKnife.inject(this, rootView);
+
         // Set up listView and its adapter
-        ListView listView = (ListView) rootView.findViewById(R.id.highscoreListView);
-        adapter = new HighscoresListAdapter(parent);
-        listView.setAdapter(adapter);
-
-        this.viewUserRank = (TextView) rootView.findViewById(R.id.userRank);
-        this.viewUserName = (TextView) rootView.findViewById(R.id.username);
-        this.viewUserScore = (TextView) rootView.findViewById(R.id.userScore);
-        this.viewMaxScore = (TextView) rootView.findViewById(R.id.possibleMaxScore);
-
-        this.backgroundText = (TextView) rootView.findViewById(R.id.emptyText);
-
-        // Set up view to display user appData and statistics. OnClick leads to detailed statistics of that user
-        this.statsView = rootView.findViewById(R.id.userstats);
-        this.statsView.setVisibility(View.GONE);
-
-        this.errorView = rootView.findViewById(R.id.updateError);
-        this.errorView.setVisibility(View.GONE);
+        mAdapter = new HighscoresListAdapter(mParent);
+        listView.setAdapter(mAdapter);
 
         return rootView;
     }
@@ -132,12 +127,6 @@ public class HighscoresFragment extends BaseFragment {
         super.onResume();
 
         getHighscoreData();
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -172,22 +161,21 @@ public class HighscoresFragment extends BaseFragment {
     }
 
     private void getHighscoreData() {
-        mBus.post(new LoadHighscoresEvent(this.weekNumber));
+        mBus.post(new LoadHighscoresEvent(mWeekNumber));
     }
 
     /**
      * Shows an error indicator with a message further explaining the error to the user
      */
     private void showErrorIndicator(boolean isNetworkError) {
-        this.statsView.setVisibility(View.GONE);
+        statsView.setVisibility(View.GONE);
 
-        this.errorView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.VISIBLE);
 
-        TextView reason = (TextView) this.errorView.findViewById(R.id.textPicksDisabled);
         if (isNetworkError) {
-            reason.setText(getResources().getString(R.string.check_connection));
+            errorReason.setText(getResources().getString(R.string.check_connection));
         } else {
-            reason.setText(getResources().getString(R.string.server_down));
+            errorReason.setText(getResources().getString(R.string.server_down));
         }
     }
 
@@ -195,9 +183,9 @@ public class HighscoresFragment extends BaseFragment {
      * Hides the error indicator, error was resolved
      */
     private void hideErrorIndicator() {
-        this.statsView.setVisibility(View.VISIBLE);
+        statsView.setVisibility(View.VISIBLE);
 
-        this.errorView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
     }
 
     /**
@@ -212,13 +200,13 @@ public class HighscoresFragment extends BaseFragment {
 
         statsView.setVisibility(View.VISIBLE);
 
-        adapter.setCurrentPlayer(event.getPlayerName());
-        adapter.setMaxScore(event.getMaxScore());
+        mAdapter.setCurrentPlayer(event.getPlayerName());
+        mAdapter.setMaxScore(event.getMaxScore());
 
-        this.statsView.setOnClickListener(new View.OnClickListener() {
+        statsView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(parent, PlayerStatisticsActivity.class);
+                Intent intent = new Intent(mParent, PlayerStatisticsActivity.class);
                 intent.putExtra(PlayerStatisticsActivity.EXTRA_USER_NAME, event.getPlayerName());
                 startActivity(intent);
             }
@@ -236,27 +224,27 @@ public class HighscoresFragment extends BaseFragment {
 
         List<Highscore> highscores = event.getHighscores().getSortedHighscores();
 
-        adapter.clearData();
+        mAdapter.clearData();
         for (Highscore highscore : highscores) {
-            adapter.addData(highscore);
+            mAdapter.addData(highscore);
         }
-        adapter.notifyDataSetChanged();
-        adapter.setOverallHighscores(event.isOverallHighscores());
-        adapter.setSeasonInfo(event.getSeasonInfo());
+        mAdapter.notifyDataSetChanged();
+        mAdapter.setOverallHighscores(event.isOverallHighscores());
+        mAdapter.setSeasonInfo(event.getSeasonInfo());
 
         if (highscores.size() == 0) {
-            this.backgroundText.setVisibility(View.VISIBLE);
-            this.statsView.setVisibility(View.INVISIBLE);
+            backgroundText.setVisibility(View.VISIBLE);
+            statsView.setVisibility(View.INVISIBLE);
         } else if (event.getUserRank() == -1) {
-            this.statsView.setVisibility(View.INVISIBLE);
+            statsView.setVisibility(View.INVISIBLE);
         } else {
-            this.viewUserRank.setText(getString(R.string.rank) + " " + event.getUserRank());
+            viewUserRank.setText(getString(R.string.rank) + " " + event.getUserRank());
         }
 
         if (event.isOverallHighscores()) {
-            this.backgroundText.setText(getString(R.string.empty_overall_scores));
+            backgroundText.setText(getString(R.string.empty_overall_scores));
         } else {
-            this.backgroundText.setText(getString(R.string.empty_week_scores));
+            backgroundText.setText(getString(R.string.empty_week_scores));
         }
     }
 
@@ -265,7 +253,7 @@ public class HighscoresFragment extends BaseFragment {
      * or if it was destined for another fragment
      */
     private void checkIfEventShouldBeHandled(HighscoresLoadedEvent event) {
-        if (event.getSeasonInfo().getWeek() == this.weekNumber) {
+        if (event.getSeasonInfo().getWeek() == mWeekNumber) {
             handleEvent(event);
         }
     }

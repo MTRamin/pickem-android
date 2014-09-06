@@ -31,10 +31,8 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import de.mtrstudios.nflpickem.API.Data.Score;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
-import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.Games.GamesActivity;
 
@@ -105,7 +103,11 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
         if ((mScores != null) && (mScores.size() != 0)) {
             final int score = mScores.get(week).getScore();
             final int maxScore = mMaxScore;
-            final int percentage = (int) (((float) score / (float) maxScore) * 100);
+
+            int percentage = 0;
+            if (maxScore > 0) {
+                percentage = (int) (((float) score / (float) maxScore) * 100);
+            }
 
             // Set appData
             viewHolder.weekNumber.setText(String.valueOf(rowSeason.getWeek()));
@@ -158,14 +160,20 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
      * ViewHolder to reference the views used by a row of Player Statistics
      */
     static class ScoresViewHolder {
-        @InjectView(R.id.weekItem) View weekItem;
+        @InjectView(R.id.weekItem)
+        View weekItem;
 
-        @InjectView(R.id.imageArrow) ImageView weekArrow;
+        @InjectView(R.id.imageArrow)
+        ImageView weekArrow;
 
-        @InjectView(R.id.textWeekNumber) TextView weekNumber;
-        @InjectView(R.id.textWeekPercentage) TextView weekPercentage;
-        @InjectView(R.id.textWeekScore) TextView weekScore;
-        @InjectView(R.id.textWeekMaxScore) TextView weekMaxScore;
+        @InjectView(R.id.textWeekNumber)
+        TextView weekNumber;
+        @InjectView(R.id.textWeekPercentage)
+        TextView weekPercentage;
+        @InjectView(R.id.textWeekScore)
+        TextView weekScore;
+        @InjectView(R.id.textWeekMaxScore)
+        TextView weekMaxScore;
 
         ScoresViewHolder(View itemView) {
             ButterKnife.inject(this, itemView);

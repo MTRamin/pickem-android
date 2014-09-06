@@ -28,17 +28,18 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.mtrstudios.nflpickem.API.Responses.Token;
-import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 import de.mtrstudios.nflpickem.Handlers.ApiHandler;
+import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 import de.mtrstudios.nflpickem.R;
 import de.mtrstudios.nflpickem.UI.BaseActivity;
 import de.mtrstudios.nflpickem.UI.Games.GamesActivity;
@@ -52,20 +53,19 @@ import retrofit.client.Response;
 public class LoginActivity extends BaseActivity {
 
     // UI references.
-    private EditText mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
+    @InjectView(R.id.email) EditText mEmailView;
+    @InjectView(R.id.password) EditText mPasswordView;
+    @InjectView(R.id.login_form) View mProgressView;
+    @InjectView(R.id.login_progress) View mLoginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Set up the login form.
-        mEmailView = (EditText) findViewById(R.id.email);
+        ButterKnife.inject(this);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        // Set up the login form.
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -76,17 +76,6 @@ public class LoginActivity extends BaseActivity {
                 return false;
             }
         });
-
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
 
         // Scale Icon View
         DisplayMetrics metrics = new DisplayMetrics();
@@ -110,7 +99,7 @@ public class LoginActivity extends BaseActivity {
         int newBmapWidth = (int) (bmapWidth * ratioMultiplier);
         int newBmapHeight = (int) (bmapHeight * ratioMultiplier);
 
-        ImageView iView = (ImageView) findViewById(R.id.icon);
+        ImageView iView = ButterKnife.findById(this, R.id.icon);
         iView.setLayoutParams(new LinearLayout.LayoutParams(newBmapWidth, newBmapHeight));
     }
 
@@ -119,6 +108,7 @@ public class LoginActivity extends BaseActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
+    @OnClick(R.id.email_sign_in_button)
     public void attemptLogin() {
 
         // Reset errors.

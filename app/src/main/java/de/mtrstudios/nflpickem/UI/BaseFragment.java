@@ -59,6 +59,7 @@ public class BaseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
+        // Reset the ButterKnife views
         ButterKnife.reset(this);
     }
 }

@@ -34,6 +34,9 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.mtrstudios.nflpickem.API.Data.Game;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
@@ -54,17 +57,26 @@ import de.mtrstudios.nflpickem.UI.PlayerStatistics.PlayerStatisticsActivity;
 public class GamesFragment extends BaseFragment {
 
     // Data
-    private String playerName;
-    private SeasonInfo seasonInfo;
-    private int score;
+    private String mPlayerName;
+    private SeasonInfo mSeasonInfo;
+    private int mScore;
 
     // UI References
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private View updateErrorIndicator;
-    private View seasonInfoView;
-    private ListView listView;
-    private ViewGroup rootView;
-    private GamesListAdapter adapter;
+    @InjectView(R.id.swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
+    @InjectView(R.id.updateError) View updateErrorIndicator;
+    @InjectView(R.id.seasonInfo) View seasonInfoView;
+    @InjectView(R.id.gamesListView) ListView listView;
+    @InjectView(R.id.errorIcon) ImageView errorIcon;
+    @InjectView(R.id.errorBackground) View errorBackground;
+    @InjectView(R.id.textPicksDisabled) TextView errorReason;
+
+    @InjectView(R.id.textSeason) TextView textSeason;
+    @InjectView(R.id.textWeek) TextView textWeek;
+    @InjectView(R.id.textUserScore) TextView textUserScore;
+    @InjectView(R.id.textUserMaxScore) TextView textUserMaxScore;
+    @InjectView(R.id.textUserName) TextView textUserName;
+
+    private GamesListAdapter mAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -102,12 +114,12 @@ public class GamesFragment extends BaseFragment {
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
-            this.playerName = bundle.getString(GamesActivity.EXTRA_PLAYER_NAME, "");
-            this.seasonInfo = bundle.getParcelable(GamesActivity.EXTRA_SEASON_INFO);
-            this.score = bundle.getInt(GamesActivity.EXTRA_WEEK_SCORE);
+            this.mPlayerName = bundle.getString(GamesActivity.EXTRA_PLAYER_NAME, "");
+            this.mSeasonInfo = bundle.getParcelable(GamesActivity.EXTRA_SEASON_INFO);
+            this.mScore = bundle.getInt(GamesActivity.EXTRA_WEEK_SCORE);
         }
 
-        String title = (this.seasonInfo != null) ? getString(R.string.week) + " " + this.seasonInfo.getWeek() : getString(R.string.current_week);
+        String title = (this.mSeasonInfo != null) ? getString(R.string.week) + " " + mSeasonInfo.getWeek() : getString(R.string.current_week);
         getActivity().getActionBar().setTitle(title);
     }
 
@@ -115,22 +127,16 @@ public class GamesFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_games, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_games, container, false);
+
+        // Inject views
+        ButterKnife.inject(this, rootView);
 
         // Set up ListView and adapter
-        listView = (ListView) rootView.findViewById(R.id.gamesListView);
-        adapter = new GamesListAdapter(this.getActivity(), this);
-        listView.setAdapter(adapter);
-
-        // Set up player/seasons tatistics
-        seasonInfoView = rootView.findViewById(R.id.seasonInfo);
-        seasonInfoView.setVisibility(View.GONE);
-
-        updateErrorIndicator = rootView.findViewById(R.id.updateError);
-        updateErrorIndicator.setVisibility(View.GONE);
+        mAdapter = new GamesListAdapter(this.getActivity(), this);
+        listView.setAdapter(mAdapter);
 
         // Set up SwipeRefreshLayout
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -139,7 +145,7 @@ public class GamesFragment extends BaseFragment {
         });
         swipeRefreshLayout.setColorSchemeResources(R.color.secondary_lighter, R.color.secondary_darkest, R.color.secondary_lighter, R.color.secondary_darkest);
 
-        scaleIcon((ImageView) rootView.findViewById(R.id.errorIcon));
+        scaleIcon(ButterKnife.findById(rootView, R.id.errorIcon));
 
         return rootView;
     }
@@ -154,14 +160,14 @@ public class GamesFragment extends BaseFragment {
     /**
      * Scales and positions the background icon
      */
-    private void scaleIcon(ImageView target) {
+    private void scaleIcon(View target) {
         // Scale Icon View
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int height = metrics.heightPixels;
         int width = metrics.widthPixels;
 
-        BitmapDrawable bmap = (BitmapDrawable) this.getResources().getDrawable(R.drawable.loginbackgroundicon);
+        BitmapDrawable bmap = (BitmapDrawable) getResources().getDrawable(R.drawable.loginbackgroundicon);
         float bmapWidth = bmap.getBitmap().getWidth();
         float bmapHeight = bmap.getBitmap().getHeight();
 
@@ -219,7 +225,7 @@ public class GamesFragment extends BaseFragment {
             swipeRefreshLayout.setRefreshing(true);
         }
 
-        mBus.post(new LoadGamesDataEvent(this.playerName, this.seasonInfo, this.score, false));
+        mBus.post(new LoadGamesDataEvent(mPlayerName, mSeasonInfo, mScore, false));
     }
 
     /**
@@ -229,7 +235,7 @@ public class GamesFragment extends BaseFragment {
         if (!swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(true);
         }
-        mBus.post(new LoadGamesDataEvent(this.playerName, this.seasonInfo, this.score, true));
+        mBus.post(new LoadGamesDataEvent(mPlayerName, mSeasonInfo, mScore, true));
     }
 
     /**
@@ -249,18 +255,17 @@ public class GamesFragment extends BaseFragment {
             swipeRefreshLayout.setRefreshing(false);
         }
 
-        if (adapter.getCount() == 0) {
-            rootView.findViewById(R.id.errorBackground).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.errorIcon).setVisibility(View.VISIBLE);
+        if (mAdapter.getCount() == 0) {
+            errorBackground.setVisibility(View.VISIBLE);
+            errorIcon.setVisibility(View.VISIBLE);
         }
-        adapter.setPickingEnabled(false);
+        mAdapter.setPickingEnabled(false);
 
         // Set Error Text according to error type (server/client error)
-        TextView reason = (TextView) updateErrorIndicator.findViewById(R.id.textPicksDisabled);
         if (isNetworkError) {
-            reason.setText(getResources().getString(R.string.check_connection));
+            errorReason.setText(getResources().getString(R.string.check_connection));
         } else {
-            reason.setText(getResources().getString(R.string.server_down));
+            errorReason.setText(getResources().getString(R.string.server_down));
         }
 
         if (updateErrorIndicator.getVisibility() == View.GONE) {
@@ -274,8 +279,8 @@ public class GamesFragment extends BaseFragment {
      * Hides the error label from the user, error was resolved
      */
     public void hideErrorIndicator() {
-        rootView.findViewById(R.id.errorBackground).setVisibility(View.INVISIBLE);
-        rootView.findViewById(R.id.errorIcon).setVisibility(View.INVISIBLE);
+        errorBackground.setVisibility(View.INVISIBLE);
+        errorIcon.setVisibility(View.INVISIBLE);
 
         if (updateErrorIndicator.getVisibility() == View.VISIBLE) {
             updateErrorIndicator.setVisibility(View.GONE);
@@ -285,8 +290,8 @@ public class GamesFragment extends BaseFragment {
     /**
      * Starts the User Statistics Activity with the users username
      */
-    private void launchStatsActivity(String userName) {
-        Intent intent = new Intent(this.getActivity(), PlayerStatisticsActivity.class);
+    public void launchStatsActivity(String userName) {
+        Intent intent = new Intent(getActivity(), PlayerStatisticsActivity.class);
         intent.putExtra(PlayerStatisticsActivity.EXTRA_USER_NAME, userName);
         startActivity(intent);
     }
@@ -304,8 +309,8 @@ public class GamesFragment extends BaseFragment {
      */
     @Subscribe
     public void onPickSent(PickSentEvent event) {
-        adapter.addGames(event.getGames());
-        adapter.animateChangedPick(event.getPick(), event.getViewHolder());
+        mAdapter.addGames(event.getGames());
+        mAdapter.animateChangedPick(event.getPick(), event.getViewHolder());
     }
 
     /**
@@ -327,11 +332,12 @@ public class GamesFragment extends BaseFragment {
     @Subscribe
     public void onSeasonStatisticsLoaded(final SeasonStatisticsLoadedEvent event) {
 
-        ((TextView) rootView.findViewById(R.id.textSeason)).setText(String.valueOf(event.getSeasonInfo().getSeasonNice()));
-        ((TextView) rootView.findViewById(R.id.textWeek)).setText(getString(R.string.week) + " " + String.valueOf(event.getSeasonInfo().getWeek()));
-        ((TextView) rootView.findViewById(R.id.textUserScore)).setText(String.valueOf(event.getScore()));
-        ((TextView) rootView.findViewById(R.id.textUserMaxScore)).setText(String.valueOf(event.getMaxScore()));
-        ((TextView) rootView.findViewById(R.id.textUserName)).setText(event.getPlayerName());
+        textSeason.setText(String.valueOf(event.getSeasonInfo().getSeasonNice()));
+        textWeek.setText(getString(R.string.week) + " " + String.valueOf(event.getSeasonInfo().getWeek()));
+        textUserScore.setText(String.valueOf(event.getScore()));
+        textUserMaxScore.setText(String.valueOf(event.getMaxScore()));
+        textUserName.setText(event.getPlayerName());
+
         seasonInfoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -339,7 +345,7 @@ public class GamesFragment extends BaseFragment {
             }
         });
 
-        animateCurrentWeekIn(rootView.findViewById(R.id.seasonInfo));
+        animateCurrentWeekIn(seasonInfoView);
     }
 
     /**
@@ -352,9 +358,9 @@ public class GamesFragment extends BaseFragment {
         swipeRefreshLayout.setRefreshing(false);
         swipeRefreshLayout.setEnabled(event.isPickingEnabled());
 
-        adapter.addGames(event.getGames());
-        adapter.setPickingEnabled(event.isPickingEnabled());
-        adapter.notifyDataSetChanged();
+        mAdapter.addGames(event.getGames());
+        mAdapter.setPickingEnabled(event.isPickingEnabled());
+        mAdapter.notifyDataSetChanged();
     }
 
 }

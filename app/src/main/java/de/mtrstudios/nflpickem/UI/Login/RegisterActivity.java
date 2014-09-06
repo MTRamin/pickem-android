@@ -36,6 +36,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.mtrstudios.nflpickem.API.Response;
 import de.mtrstudios.nflpickem.API.Responses.Token;
 import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
@@ -52,22 +55,21 @@ import retrofit.RetrofitError;
 public class RegisterActivity extends BaseActivity {
 
     // UI references.
-    private EditText mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
+    @InjectView(R.id.email) EditText mEmailView;
+    @InjectView(R.id.password) EditText mPasswordView;
+    @InjectView(R.id.login_form) View mProgressView;
+    @InjectView(R.id.login_progress) View mLoginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        ButterKnife.inject(this);
+
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Set up the login form.
-        mEmailView = (EditText) findViewById(R.id.email);
-
-        mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -78,17 +80,6 @@ public class RegisterActivity extends BaseActivity {
                 return false;
             }
         });
-
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
 
         // Scale Icon View
         DisplayMetrics metrics = new DisplayMetrics();
@@ -112,7 +103,7 @@ public class RegisterActivity extends BaseActivity {
         int newBmapWidth = (int) (bmapWidth * ratioMultiplier);
         int newBmapHeight = (int) (bmapHeight * ratioMultiplier);
 
-        ImageView iView = (ImageView) findViewById(R.id.icon);
+        ImageView iView = ButterKnife.findById(this, R.id.icon);
         iView.setLayoutParams(new LinearLayout.LayoutParams(newBmapWidth, newBmapHeight));
     }
 
@@ -121,6 +112,7 @@ public class RegisterActivity extends BaseActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
+    @OnClick(R.id.email_sign_in_button)
     public void attemptLogin() {
 
         // Reset errors.

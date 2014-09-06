@@ -42,7 +42,6 @@ public class GamesActivity extends BaseActivity
     public static final String EXTRA_SEASON_INFO = "season_info";
     public static final String EXTRA_WEEK_SCORE = "week_score";
 
-    private PickEmApplication application;
 
     /**
      * Find out if a user is already logged in
@@ -56,8 +55,6 @@ public class GamesActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick);
-
-        this.application = (PickEmApplication) getApplication();
 
         if (isUserLoggedIn()) { // Check if user is logged in already
 

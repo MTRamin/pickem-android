@@ -29,8 +29,8 @@ import de.mtrstudios.nflpickem.API.PickEmAPI;
 import de.mtrstudios.nflpickem.API.Response;
 import de.mtrstudios.nflpickem.API.Responses.Scores;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
-import de.mtrstudios.nflpickem.Events.Return.PlayerScoresLoadedEvent;
 import de.mtrstudios.nflpickem.Events.Outgoing.LoadPlayerScoresEvent;
+import de.mtrstudios.nflpickem.Events.Return.PlayerScoresLoadedEvent;
 import de.mtrstudios.nflpickem.Handlers.PickEmDataHandler;
 import retrofit.RetrofitError;
 

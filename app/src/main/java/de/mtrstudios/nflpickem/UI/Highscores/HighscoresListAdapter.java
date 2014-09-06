@@ -29,6 +29,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.mtrstudios.nflpickem.API.Data.Highscore;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.R;
@@ -40,27 +42,27 @@ import de.mtrstudios.nflpickem.UI.PlayerStatistics.PlayerStatisticsActivity;
  */
 public class HighscoresListAdapter extends BaseAdapter {
 
-    private HighscoresActivity parent;
+    private HighscoresActivity mParent;
 
-    private List<Highscore> highscores = new ArrayList<Highscore>();
+    private List<Highscore> mHighscores = new ArrayList<Highscore>();
 
-    private int maxScore;
-    private String currentPlayer;
-    private SeasonInfo seasonInfo;
-    private boolean isOverallHighscores;
+    private String mCurrentPlayer;
+    private int mMaxScore;
+    private SeasonInfo mSeasonInfo;
+    private boolean mOverallHighscore;
 
     public HighscoresListAdapter(HighscoresActivity parent) {
-        this.parent = parent;
+        mParent = parent;
     }
 
     @Override
     public int getCount() {
-        return highscores.size();
+        return mHighscores.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return highscores.get(i);
+        return mHighscores.get(i);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class HighscoresListAdapter extends BaseAdapter {
 
         if (view == null) {
             // Inflate Layout
-            LayoutInflater inflater = this.parent.getLayoutInflater();
+            LayoutInflater inflater = mParent.getLayoutInflater();
             view = inflater.inflate(R.layout.row_highscore, viewGroup, false);
 
             // Set up ViewHolder
@@ -93,25 +95,26 @@ public class HighscoresListAdapter extends BaseAdapter {
      * Populates the views with appData for the current row
      */
     private void createView(int position, HighscoreViewHolder viewHolder) {
-        final Highscore highscore = highscores.get(position);
+        final Highscore highscore = mHighscores.get(position);
+        int rank = position + 1;
 
         // Set highscore appData, rank and user name
-        viewHolder.highscoreRank.setText(String.valueOf(position + 1));
+        viewHolder.highscoreRank.setText(String.valueOf(rank));
         viewHolder.highscoreUser.setText(highscore.getUser());
 
         viewHolder.highscoreScore.setText(String.valueOf(highscore.getCorrect()));
-        viewHolder.highscorePossible.setText(String.valueOf(maxScore));
+        viewHolder.highscorePossible.setText(String.valueOf(mMaxScore));
 
         // Calculate and set percentage of correct picks
         int percentage = 0;
-        if (maxScore > 0) {
-            percentage = (int) (((float) highscore.getCorrect() / (float) maxScore) * 100);
+        if (mMaxScore > 0) {
+            percentage = (int) (((float) highscore.getCorrect() / (float) mMaxScore) * 100);
         }
-        viewHolder.highscorePercentage.setText(String.valueOf(percentage) + parent.getString(R.string.percent));
+        viewHolder.highscorePercentage.setText(String.valueOf(percentage) + mParent.getString(R.string.percent));
 
         // Show a small indicator that shows the currently logged in user in the list
-        if (highscore.getUser().equals(currentPlayer)) {
-            viewHolder.highscorePlayerIndicator.setBackgroundColor(parent.getResources().getColor(R.color.secondary_base));
+        if (highscore.getUser().equals(mCurrentPlayer)) {
+            viewHolder.highscorePlayerIndicator.setBackgroundColor(mParent.getResources().getColor(R.color.secondary_base));
             viewHolder.highscorePlayerIndicator.setVisibility(View.VISIBLE);
         } else {
             viewHolder.highscorePlayerIndicator.setVisibility(View.INVISIBLE);
@@ -123,53 +126,53 @@ public class HighscoresListAdapter extends BaseAdapter {
         viewHolder.highscoreItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isOverallHighscores) {
-                    Intent intent = new Intent(parent, PlayerStatisticsActivity.class);
+                if (mOverallHighscore) {
+                    Intent intent = new Intent(mParent, PlayerStatisticsActivity.class);
                     intent.putExtra(PlayerStatisticsActivity.EXTRA_USER_NAME, highscore.getUser());
-                    parent.startActivity(intent);
-                    parent.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    mParent.startActivity(intent);
+                    mParent.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 } else {
-                    Intent intent = new Intent(parent, GamesActivity.class);
+                    Intent intent = new Intent(mParent, GamesActivity.class);
                     intent.putExtra(GamesActivity.EXTRA_PLAYER_NAME, highscore.getUser());
-                    intent.putExtra(GamesActivity.EXTRA_SEASON_INFO, seasonInfo);
+                    intent.putExtra(GamesActivity.EXTRA_SEASON_INFO, mSeasonInfo);
                     intent.putExtra(GamesActivity.EXTRA_WEEK_SCORE, highscore.getCorrect());
-                    parent.startActivity(intent);
-                    parent.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    mParent.startActivity(intent);
+                    mParent.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 }
             }
         });
 
         // Change arrow color and set it to the ImageView
-        Drawable arrow = parent.getResources().getDrawable(R.drawable.next);
-        arrow.setColorFilter(parent.getResources().getColor(R.color.secondary_base), PorterDuff.Mode.SRC_ATOP);
+        Drawable arrow = mParent.getResources().getDrawable(R.drawable.next);
+        arrow.setColorFilter(mParent.getResources().getColor(R.color.secondary_base), PorterDuff.Mode.SRC_ATOP);
         viewHolder.highscoreArrow.setImageDrawable(arrow);
     }
 
     public void addData(Highscore highscore) {
-        this.highscores.add(highscore);
+        mHighscores.add(highscore);
     }
 
     public void setSeasonInfo(SeasonInfo seasonInfo) {
-        this.seasonInfo = seasonInfo;
+        mSeasonInfo = seasonInfo;
     }
 
     public void setOverallHighscores(boolean overallHighscores) {
-        this.isOverallHighscores = overallHighscores;
+        mOverallHighscore = overallHighscores;
     }
 
     public void setMaxScore(int maxScore) {
-        this.maxScore = maxScore;
+        mMaxScore = maxScore;
     }
 
     public void setCurrentPlayer(String playerName) {
-        this.currentPlayer = playerName;
+        mCurrentPlayer = playerName;
     }
 
     /**
      * Clear the data of the list
      */
     public void clearData() {
-        this.highscores.clear();
+        mHighscores.clear();
         notifyDataSetChanged();
     }
 
@@ -177,31 +180,20 @@ public class HighscoresListAdapter extends BaseAdapter {
      * ViewHolder for the views of a row of the ListView
      */
     static class HighscoreViewHolder {
-        protected View highscoreItem;
+        @InjectView(R.id.highscoreItem) View highscoreItem;
 
-        protected View highscorePlayerIndicator;
+        @InjectView(R.id.highscorePlayerIndicator) View highscorePlayerIndicator;
 
-        protected TextView highscoreRank;
-        protected TextView highscoreUser;
-        protected TextView highscoreScore;
-        protected TextView highscorePossible;
-        protected TextView highscorePercentage;
+        @InjectView(R.id.highscoreRank) TextView highscoreRank;
+        @InjectView(R.id.highscoreUserName) TextView highscoreUser;
+        @InjectView(R.id.highscoreScore) TextView highscoreScore;
+        @InjectView(R.id.highscorePossible) TextView highscorePossible;
+        @InjectView(R.id.highscorePercentage) TextView highscorePercentage;
 
-        protected ImageView highscoreArrow;
+        @InjectView(R.id.imageArrow) ImageView highscoreArrow;
 
         HighscoreViewHolder(View itemView) {
-            this.highscoreItem = itemView.findViewById(R.id.highscoreItem);
-
-            this.highscorePlayerIndicator = itemView.findViewById(R.id.highscorePlayerIndicator);
-
-            this.highscoreRank = (TextView) itemView.findViewById(R.id.highscoreRank);
-            this.highscoreUser = (TextView) itemView.findViewById(R.id.highscoreUserName);
-
-            this.highscoreScore = (TextView) itemView.findViewById(R.id.highscoreScore);
-            this.highscorePossible = (TextView) itemView.findViewById(R.id.highscorePossible);
-            this.highscorePercentage = (TextView) itemView.findViewById(R.id.highscorePercentage);
-
-            this.highscoreArrow = (ImageView) itemView.findViewById(R.id.imageArrow);
+            ButterKnife.inject(this, itemView);
         }
     }
 }

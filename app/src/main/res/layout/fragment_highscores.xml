@@ -30,7 +30,8 @@
         android:animateLayoutChanges="true"
         android:background="@color/secondary_darker"
         android:paddingBottom="10dp"
-        android:paddingTop="10dp">
+        android:paddingTop="10dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/userRank"
@@ -107,7 +108,8 @@
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="10dp"
-        android:paddingTop="10dp">
+        android:paddingTop="10dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/textUpdateFailed"
