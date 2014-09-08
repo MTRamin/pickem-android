@@ -27,8 +27,8 @@ import de.mtrstudios.nflpickem.API.Data.Pick;
 import de.mtrstudios.nflpickem.API.PickEmAPI;
 import de.mtrstudios.nflpickem.API.Response;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
-import de.mtrstudios.nflpickem.Events.Return.PickSentEvent;
 import de.mtrstudios.nflpickem.Events.Outgoing.SendPickEvent;
+import de.mtrstudios.nflpickem.Events.Return.PickSentEvent;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 

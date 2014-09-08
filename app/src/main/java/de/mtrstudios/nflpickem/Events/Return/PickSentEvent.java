@@ -18,6 +18,7 @@ package de.mtrstudios.nflpickem.Events.Return;
 import java.util.List;
 
 import de.mtrstudios.nflpickem.API.Data.Game;
+import de.mtrstudios.nflpickem.API.Data.Team;
 import de.mtrstudios.nflpickem.UI.Games.GamesListAdapter;
 
 /**
@@ -25,10 +26,10 @@ import de.mtrstudios.nflpickem.UI.Games.GamesListAdapter;
  */
 public class PickSentEvent {
     private final List<Game> games;
-    private final String pick;
+    private final Team pick;
     private final GamesListAdapter.GameViewHolder viewHolder;
 
-    public PickSentEvent(GamesListAdapter.GameViewHolder viewHolder, String pick, List<Game> games) {
+    public PickSentEvent(GamesListAdapter.GameViewHolder viewHolder, Team pick, List<Game> games) {
         this.viewHolder = viewHolder;
         this.pick = pick;
         this.games = games;
@@ -38,7 +39,7 @@ public class PickSentEvent {
         return games;
     }
 
-    public String getPick() {
+    public Team getPick() {
         return pick;
     }
 

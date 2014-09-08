@@ -17,6 +17,7 @@
 package de.mtrstudios.nflpickem.API;
 
 import de.mtrstudios.nflpickem.API.Data.Pick;
+import de.mtrstudios.nflpickem.API.Data.Team;
 import de.mtrstudios.nflpickem.API.Responses.Games;
 import de.mtrstudios.nflpickem.API.Responses.GamesPerWeek;
 import de.mtrstudios.nflpickem.API.Responses.Highscores;
@@ -65,7 +66,7 @@ public interface PickEmAPI {
     //  --------------------------------------
     @FormUrlEncoded
     @POST("/api/picks/pick")
-    public void pickGame(@Field("game") String gamekey, @Field("pick") String pick, @Field("token") String token, Callback<Response<Pick>> callback);
+    public void pickGame(@Field("game") String gamekey, @Field("pick") Team pick, @Field("token") String token, Callback<Response<Pick>> callback);
 
     //  --------------------------------------
     //  Scores

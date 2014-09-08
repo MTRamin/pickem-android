@@ -37,6 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.mtrstudios.nflpickem.API.Data.Comparators.GamesComparator;
 import de.mtrstudios.nflpickem.API.Data.Game;
+import de.mtrstudios.nflpickem.API.Data.Team;
 import de.mtrstudios.nflpickem.NFLTeams;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
@@ -58,7 +59,6 @@ public class GamesListAdapter extends BaseAdapter {
         this.mContext = context;
         this.mFragment = fragment;
     }
-
 
     @Override
     public int getCount() {
@@ -156,16 +156,16 @@ public class GamesListAdapter extends BaseAdapter {
                 }
 
                 // Show correct / wrong pick indicators and animate them in
-                if (game.getPick().equals("HOME")) {
-                    if (game.getWinner().equals("HOME")) {
+                if (game.getPick().isHome()) {
+                    if (game.getWinner().isHome()) {
                         viewHolder.homePickIndicator.setBackgroundColor(correctColor);
                     } else {
                         viewHolder.homePickIndicator.setBackgroundColor(wrongColor);
                     }
                 }
 
-                if (game.getPick().equals("AWAY")) {
-                    if (game.getWinner().equals("HOME")) {
+                if (game.getPick().isAway()) {
+                    if (game.getWinner().isHome()) {
                         viewHolder.awayPickIndicator.setBackgroundColor(wrongColor);
                     } else {
                         viewHolder.awayPickIndicator.setBackgroundColor(correctColor);
@@ -176,11 +176,11 @@ public class GamesListAdapter extends BaseAdapter {
 
         // Animate the correct pick indicator to slowly show it to the user
         if (game.getPick() != null) {
-            if (game.getPick().equals("HOME")) {
+            if (game.getPick().isHome()) {
                 pickAnimation(viewHolder.homePickIndicator, true);
             }
 
-            if (game.getPick().equals("AWAY")) {
+            if (game.getPick().isAway()) {
                 pickAnimation(viewHolder.awayPickIndicator, false);
             }
         }
@@ -189,7 +189,7 @@ public class GamesListAdapter extends BaseAdapter {
         viewHolder.homeTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pick("HOME", game, viewHolder);
+                pick(Team.HOME, game, viewHolder);
             }
         });
 
@@ -197,7 +197,7 @@ public class GamesListAdapter extends BaseAdapter {
         viewHolder.awayTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pick("AWAY", game, viewHolder);
+                pick(Team.AWAY, game, viewHolder);
             }
         });
     }
@@ -206,10 +206,10 @@ public class GamesListAdapter extends BaseAdapter {
      * Checks if a pick is actually different from the old pick and if picking is enabled
      * If the new pick needs to be submitted it calls the function doing so
      */
-    private void pick(String pick, Game game, GameViewHolder viewHolder) {
-        String currentPick = game.getPick();
+    private void pick(Team pick, Game game, GameViewHolder viewHolder) {
+        Team currentPick = game.getPick();
 
-        boolean needToSubmitPick = mPickingEnabled && ((currentPick == null) || (!currentPick.equals(pick))) && (game.getQuarter().equals("P"));
+        boolean needToSubmitPick = mPickingEnabled && ((currentPick == null) || (!currentPick.equals(pick))) && (game.isPreGame());
 
         if (needToSubmitPick) {
             mFragment.submitPick(pick, game, viewHolder);
@@ -220,8 +220,8 @@ public class GamesListAdapter extends BaseAdapter {
      * Prompts two animations to hide the old pick and show the new one
      * Determines which pickIndicators need to be shown/hidden
      */
-    public void animateChangedPick(String pick, GameViewHolder viewHolder) {
-        boolean isHome = (pick.equals("HOME"));
+    public void animateChangedPick(Team pick, GameViewHolder viewHolder) {
+        boolean isHome = (pick.isHome());
 
         View animateIn = (isHome) ? viewHolder.homePickIndicator : viewHolder.awayPickIndicator;
         View animateOut = (isHome) ? viewHolder.awayPickIndicator : viewHolder.homePickIndicator;

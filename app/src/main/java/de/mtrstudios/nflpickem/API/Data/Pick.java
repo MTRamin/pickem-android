@@ -20,15 +20,15 @@ package de.mtrstudios.nflpickem.API.Data;
  * Stores appData about a pick
  */
 public class Pick {
-    private String pick;
+    private Team pick;
     private String gamekey;
 
-    public Pick(String gamekey, String pick) {
+    public Pick(String gamekey, Team pick) {
         this.pick = pick;
         this.gamekey = gamekey;
     }
 
-    public String getPick() {
+    public Team getPick() {
         return pick;
     }
 

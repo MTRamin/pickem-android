@@ -34,7 +34,7 @@ public class Game {
 
     private int season;
     private int week;
-    private String type;
+    private SeasonType type;
 
     private String homeTeam;
     private String awayTeam;
@@ -45,10 +45,10 @@ public class Game {
     private String gamekey;
     private String kickoff;
 
-    private String quarter;
+    private Quarter quarter;
     private String gameclock;
 
-    private String pick;
+    private Team pick;
     private TeamScore homeTeamSeasonScore;
     private TeamScore awayTeamSeasonScore;
 
@@ -60,7 +60,7 @@ public class Game {
         return week;
     }
 
-    public String getType() {
+    public SeasonType getType() {
         return type;
     }
 
@@ -89,11 +89,11 @@ public class Game {
     }
 
     public boolean isPreGame() {
-        return this.quarter.equals("P");
+        return quarter == Quarter.PREGAME;
     }
 
     public boolean isPostGame() {
-        return (this.quarter.equals("F") || this.quarter.equals("FO"));
+        return (quarter == Quarter.FINAL || quarter == Quarter.FINALOVERTIME);
     }
 
     /**
@@ -118,7 +118,7 @@ public class Game {
      * Takes into consideration the Setting about which timezone to use
      */
     public String getKickoffParsed(Context context) {
-        if (this.quarter.equals("P")) {
+        if (isPreGame()) {
             String input = this.kickoff;
 
             // Date format received from server looks like this:
@@ -140,11 +140,11 @@ public class Game {
                 e.printStackTrace();
                 return "NO TIME";
             }
-        } else if (this.quarter.equals("F")) {
+        } else if (quarter == Quarter.FINAL) {
             return context.getString(R.string.game_final);
-        } else if (this.quarter.equals("FO")) {
+        } else if (quarter == Quarter.FINALOVERTIME) {
             return context.getString(R.string.game_final_overtime);
-        } else if (this.quarter.equals("H")) {
+        } else if (quarter == Quarter.HALFTIME) {
             return context.getString(R.string.game_halftime);
         } else {
             return getGameclockNice(context);
@@ -155,7 +155,7 @@ public class Game {
      * Returns the Gameclock as a nice String
      */
     public String getGameclockNice(Context context) {
-        if (this.quarter != null && this.gameclock != null) {
+        if (quarter != null && gameclock != null) {
             return context.getString(R.string.game_quarter) + this.quarter + " - " + this.gameclock;
         }
 
@@ -165,11 +165,11 @@ public class Game {
     /**
      * Calculates the winner of this game
      */
-    public String getWinner() {
-        return (this.homeScore > this.awayScore) ? "HOME" : "AWAY";
+    public Team getWinner() {
+        return (this.homeScore > this.awayScore) ? Team.HOME : Team.AWAY;
     }
 
-    public String getQuarter() {
+    public Quarter getQuarter() {
         return quarter;
     }
 
@@ -177,7 +177,7 @@ public class Game {
         return gameclock;
     }
 
-    public String getPick() {
+    public Team getPick() {
         return pick;
     }
 
@@ -195,7 +195,7 @@ public class Game {
         return TeamScore.getScoreEmpty(context);
     }
 
-    public void setPick(String pick) {
+    public void setPick(Team pick) {
         this.pick = pick;
     }
 }

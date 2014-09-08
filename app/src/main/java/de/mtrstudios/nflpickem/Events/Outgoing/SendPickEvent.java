@@ -16,23 +16,24 @@
 package de.mtrstudios.nflpickem.Events.Outgoing;
 
 import de.mtrstudios.nflpickem.API.Data.Game;
+import de.mtrstudios.nflpickem.API.Data.Team;
 import de.mtrstudios.nflpickem.UI.Games.GamesListAdapter;
 
 /**
  * Event to send a pick to the api
  */
 public class SendPickEvent extends LoadEvent {
-    private final String pick;
+    private final Team pick;
     private final Game game;
     private final GamesListAdapter.GameViewHolder viewHolder;
 
-    public SendPickEvent(String pick, Game game, GamesListAdapter.GameViewHolder viewHolder) {
+    public SendPickEvent(Team pick, Game game, GamesListAdapter.GameViewHolder viewHolder) {
         this.pick = pick;
         this.game = game;
         this.viewHolder = viewHolder;
     }
 
-    public String getPick() {
+    public Team getPick() {
         return pick;
     }
 

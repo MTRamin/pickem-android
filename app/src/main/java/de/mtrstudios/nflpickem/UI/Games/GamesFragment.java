@@ -37,6 +37,7 @@ import com.squareup.otto.Subscribe;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.mtrstudios.nflpickem.API.Data.Game;
+import de.mtrstudios.nflpickem.API.Data.Team;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 import de.mtrstudios.nflpickem.Events.Error.ApiErrorEvent;
 import de.mtrstudios.nflpickem.Events.Outgoing.LoadGamesDataEvent;
@@ -299,7 +300,7 @@ public class GamesFragment extends BaseFragment {
      * Submits a pick to the server. If submitting was successful alters the appData accordingly
      * Shows error message if download failed
      */
-    public void submitPick(final String pick, final Game game, final GamesListAdapter.GameViewHolder viewHolder) {
+    public void submitPick(final Team pick, final Game game, final GamesListAdapter.GameViewHolder viewHolder) {
         mBus.post(new SendPickEvent(pick, game, viewHolder));
     }
 
