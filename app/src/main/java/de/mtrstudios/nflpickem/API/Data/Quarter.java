@@ -24,6 +24,9 @@ public enum Quarter {
     @SerializedName("4")
     FOURTH("4"),
 
+    @SerializedName("5")
+    OVERTIME("5"),
+
     @SerializedName("F")
     FINAL("F"),
 

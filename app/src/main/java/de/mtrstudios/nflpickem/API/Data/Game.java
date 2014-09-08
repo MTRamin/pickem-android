@@ -156,7 +156,11 @@ public class Game {
      */
     public String getGameclockNice(Context context) {
         if (quarter != null && gameclock != null) {
-            return context.getString(R.string.game_quarter) + this.quarter + " - " + this.gameclock;
+            if (quarter == Quarter.OVERTIME) {
+                return quarter.getQuarterCode() + " - " + gameclock;
+            } else {
+                return context.getString(R.string.game_quarter) + quarter.getQuarterCode() + " - " + gameclock;
+            }
         }
 
         return "";

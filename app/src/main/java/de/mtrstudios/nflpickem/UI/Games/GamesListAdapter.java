@@ -38,6 +38,7 @@ import butterknife.InjectView;
 import de.mtrstudios.nflpickem.API.Data.Comparators.GamesComparator;
 import de.mtrstudios.nflpickem.API.Data.Game;
 import de.mtrstudios.nflpickem.API.Data.Team;
+import de.mtrstudios.nflpickem.Handlers.NFLTeamInfoHandler;
 import de.mtrstudios.nflpickem.NFLTeams;
 import de.mtrstudios.nflpickem.PickEmApplication;
 import de.mtrstudios.nflpickem.R;
