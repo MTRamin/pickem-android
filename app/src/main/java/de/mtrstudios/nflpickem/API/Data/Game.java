@@ -93,7 +93,7 @@ public class Game {
     }
 
     public boolean isPostGame() {
-        return (this.quarter.equals("F") || this.quarter.equals("FOT"));
+        return (this.quarter.equals("F") || this.quarter.equals("FO"));
     }
 
     /**
@@ -141,19 +141,25 @@ public class Game {
                 return "NO TIME";
             }
         } else if (this.quarter.equals("F")) {
-            return "Final";
+            return context.getString(R.string.game_final);
+        } else if (this.quarter.equals("FO")) {
+            return context.getString(R.string.game_final_overtime);
         } else if (this.quarter.equals("H")) {
-            return "Halftime";
+            return context.getString(R.string.game_halftime);
         } else {
-            return getGameclockNice();
+            return getGameclockNice(context);
         }
     }
 
     /**
      * Returns the Gameclock as a nice String
      */
-    public String getGameclockNice() {
-        return "Q" + this.quarter + " - " + this.gameclock;
+    public String getGameclockNice(Context context) {
+        if (this.quarter != null && this.gameclock != null) {
+            return context.getString(R.string.game_quarter) + this.quarter + " - " + this.gameclock;
+        }
+
+        return "";
     }
 
     /**

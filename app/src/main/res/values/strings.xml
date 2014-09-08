@@ -56,7 +56,6 @@
     <!-- Activities -->
     <string name="list_pick_score_divider">:</string>
     <string name="list_pick_time">Someday, Sometime</string>
-    <string name="games_final">Final</string>
     <string name="stats_username">Username</string>
     <string name="title_activity_highscores">HighscoresActivity</string>
     <string name="title_activity_user_stats">UserStatsActivity</string>
@@ -74,6 +73,10 @@
     <string name="rank">Rank</string>
     <string name="percent">%</string>
     <string name="score_team_empty">(0-0-0)</string>
+    <string name="game_final">Final</string>
+    <string name="game_final_overtime">Final Overtime</string>
+    <string name="game_halftime">Halftime</string>
+    <string name="game_quarter">Q</string>
 
     <!-- Errors -->
     <string name="error_update">Can\'t reach server. Picking is disabled.</string>

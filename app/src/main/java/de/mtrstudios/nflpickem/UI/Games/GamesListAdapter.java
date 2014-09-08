@@ -147,22 +147,28 @@ public class GamesListAdapter extends BaseAdapter {
 
             // Set pick indicator
             if (game.getPick() != null) {
-                if (game.isPostGame()) { // Game has ended
-                    // Show correct / wrong pick indicators and animate them in
-                    if (game.getPick().equals("HOME")) {
-                        if (game.getWinner().equals("HOME")) {
-                            viewHolder.homePickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.alternative_base));
-                        } else {
-                            viewHolder.homePickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.primary_lighter));
-                        }
-                    }
+                int correctColor = mContext.getResources().getColor(R.color.alternative_lightest);
+                int wrongColor = mContext.getResources().getColor(R.color.primary_lightest);
 
-                    if (game.getPick().equals("AWAY")) {
-                        if (game.getWinner().equals("HOME")) {
-                            viewHolder.awayPickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.primary_lighter));
-                        } else {
-                            viewHolder.awayPickIndicator.setBackgroundColor(mContext.getResources().getColor(R.color.alternative_base));
-                        }
+                if (game.isPostGame()) { // Game has ended
+                    correctColor = mContext.getResources().getColor(R.color.alternative_base);
+                    wrongColor = mContext.getResources().getColor(R.color.primary_base);
+                }
+
+                // Show correct / wrong pick indicators and animate them in
+                if (game.getPick().equals("HOME")) {
+                    if (game.getWinner().equals("HOME")) {
+                        viewHolder.homePickIndicator.setBackgroundColor(correctColor);
+                    } else {
+                        viewHolder.homePickIndicator.setBackgroundColor(wrongColor);
+                    }
+                }
+
+                if (game.getPick().equals("AWAY")) {
+                    if (game.getWinner().equals("HOME")) {
+                        viewHolder.awayPickIndicator.setBackgroundColor(wrongColor);
+                    } else {
+                        viewHolder.awayPickIndicator.setBackgroundColor(correctColor);
                     }
                 }
             }
