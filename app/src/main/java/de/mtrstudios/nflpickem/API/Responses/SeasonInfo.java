@@ -19,6 +19,8 @@ package de.mtrstudios.nflpickem.API.Responses;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import de.mtrstudios.nflpickem.API.Data.SeasonType;
+
 /**
  * Stores appData about information about the current season
  * Received as a response from the server
@@ -26,9 +28,9 @@ import android.os.Parcelable;
 public class SeasonInfo implements Parcelable {
     private int season;
     private int week;
-    private String type;
+    private SeasonType type;
 
-    public SeasonInfo(int season, int week, String type) {
+    public SeasonInfo(int season, int week, SeasonType type) {
         this.season = season;
         this.week = week;
         this.type = type;
@@ -40,9 +42,9 @@ public class SeasonInfo implements Parcelable {
     public String getSeasonNice() {
         String prefix = "";
 
-        if (type.equals("PRE")) {
+        if (type == SeasonType.PRE) {
             prefix = "Pre-";
-        } else if (type.equals("POST")) {
+        } else if (type == SeasonType.POST) {
             prefix = "Post-";
         }
 
@@ -71,7 +73,7 @@ public class SeasonInfo implements Parcelable {
         return week;
     }
 
-    public String getType() {
+    public SeasonType getType() {
         return type;
     }
 
@@ -92,13 +94,13 @@ public class SeasonInfo implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(this.season);
         parcel.writeInt(this.week);
-        parcel.writeString(this.type);
+        parcel.writeString(this.type.toString());
     }
 
     public SeasonInfo(Parcel in) {
         this.season = in.readInt();
         this.week = in.readInt();
-        this.type = in.readString();
+        this.type = SeasonType.valueOf(in.readString());
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

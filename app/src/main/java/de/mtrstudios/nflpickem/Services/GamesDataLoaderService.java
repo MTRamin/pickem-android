@@ -176,7 +176,11 @@ public class GamesDataLoaderService extends LoaderService {
      */
     private void loadScores(LoadGamesDataEvent event, SeasonStatisticsLoadedEvent response) {
         if (mAppData.getScoresByWeek().size() > 0) {
-            onScoresLoaded(mAppData.getScoreForWeek(event.getSeasonInfo()).getScore(), event, response);
+            if (!event.isCurrentWeek()) {
+                onScoresLoaded(event.getScore(), event, response);
+            } else {
+                onScoresLoaded(mAppData.getScoreForWeek(event.getSeasonInfo()).getScore(), event, response);
+            }
         } else {
             downloadScores(event, response);
         }
@@ -221,7 +225,7 @@ public class GamesDataLoaderService extends LoaderService {
      * Saves the data to the application data store
      */
     private void downloadScores(final LoadGamesDataEvent event, final SeasonStatisticsLoadedEvent serviceResponse) {
-        mApi.getScoreForUser(event.getPlayerName(), event.getSeasonInfo().getSeason(), event.getSeasonInfo().getType(), event.getToken(), new Callback<Response<Scores>>() {
+        mApi.getScoreForUser(event.getPlayerName(), event.getSeasonInfo().getSeason(), event.getSeasonInfo().getType().getSeasonTypeCode(), event.getToken(), new Callback<Response<Scores>>() {
             @Override
             public void success(Response<Scores> scoresResponse, retrofit.client.Response response) {
                 mAppData.setScoresByWeek(scoresResponse.getData().getScoresAsMap());
@@ -268,7 +272,7 @@ public class GamesDataLoaderService extends LoaderService {
      * Saves the data to the application data store
      */
     private void downloadGamesData(final LoadGamesDataEvent event) {
-        mApi.getGames(event.getPlayerName(), event.getSeasonInfo().getSeason(), event.getSeasonInfo().getWeek(), event.getSeasonInfo().getType(), event.getToken(), new Callback<Response<Games>>() {
+        mApi.getGames(event.getPlayerName(), event.getSeasonInfo().getSeason(), event.getSeasonInfo().getWeek(), event.getSeasonInfo().getType().getSeasonTypeCode(), event.getToken(), new Callback<Response<Games>>() {
             @Override
             public void success(Response<Games> gamesResponse, retrofit.client.Response response) {
                 List<Game> games = gamesResponse.getData().getSortedGames();

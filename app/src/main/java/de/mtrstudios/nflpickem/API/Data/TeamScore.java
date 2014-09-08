@@ -27,7 +27,7 @@ public class TeamScore {
 
     private String team;
     private int season;
-    private String type;
+    private SeasonType type;
 
     private int w;
     private int l;
@@ -62,7 +62,7 @@ public class TeamScore {
         return season;
     }
 
-    public String getType() {
+    public SeasonType getType() {
         return type;
     }
 

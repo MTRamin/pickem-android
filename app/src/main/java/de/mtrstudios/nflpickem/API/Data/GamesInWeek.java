@@ -22,7 +22,7 @@ package de.mtrstudios.nflpickem.API.Data;
 public class GamesInWeek {
     private int season;
     private int week;
-    private String type;
+    private SeasonType type;
     private int games;
 
     public int getSeason() {
@@ -33,7 +33,7 @@ public class GamesInWeek {
         return week;
     }
 
-    public String getType() {
+    public SeasonType getType() {
         return type;
     }
 

@@ -136,7 +136,7 @@ public class HighscoresService extends LoaderService {
      * in tha application data before posting the return event
      */
     public void downloadWeekScores(final LoadHighscoresEvent event) {
-        mApi.getScoresForWeek(event.getToken(), event.getSeasonInfo().getSeason(), event.getSeasonInfo().getWeek(), event.getSeasonInfo().getType(), new Callback<Response<Highscores>>() {
+        mApi.getScoresForWeek(event.getToken(), event.getSeasonInfo().getSeason(), event.getSeasonInfo().getWeek(), event.getSeasonInfo().getType().getSeasonTypeCode(), new Callback<Response<Highscores>>() {
             @Override
             public void success(Response<Highscores> highscoresResponse, retrofit.client.Response response) {
                 mAppData.addData(event.getSeasonInfo().getWeek(), highscoresResponse.getData());

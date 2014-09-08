@@ -22,7 +22,7 @@ package de.mtrstudios.nflpickem.API.Data;
 public class Score {
     private int week;
     private int season;
-    private String type;
+    private SeasonType type;
 
     private int correct;
     private int wrong;
@@ -49,7 +49,7 @@ public class Score {
         return season;
     }
 
-    public String getType() {
+    public SeasonType getType() {
         return type;
     }
 

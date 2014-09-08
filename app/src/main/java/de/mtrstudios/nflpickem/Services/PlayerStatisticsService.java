@@ -66,7 +66,7 @@ public class PlayerStatisticsService extends LoaderService {
 
         } else {
             // Statistics for another user
-            mApi.getScoreForUser(event.getPlayerName(), mAppData.getSeasonInfo().getSeason(), mAppData.getSeasonInfo().getType(), event.getToken(), new retrofit.Callback<Response<Scores>>() {
+            mApi.getScoreForUser(event.getPlayerName(), mAppData.getSeasonInfo().getSeason(), mAppData.getSeasonInfo().getType().getSeasonTypeCode(), event.getToken(), new retrofit.Callback<Response<Scores>>() {
                 @Override
                 public void success(Response<Scores> scoresResponse, retrofit.client.Response response) {
                     mBus.post(new PlayerScoresLoadedEvent(mAppData.getTotalGamesPlayed(), event.getPlayerName(), scoresResponse.getData(), PickEmDataHandler.getInstance().getSeasonInfo()));

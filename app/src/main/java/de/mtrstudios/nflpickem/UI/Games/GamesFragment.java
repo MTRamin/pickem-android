@@ -114,12 +114,12 @@ public class GamesFragment extends BaseFragment {
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
-            this.mPlayerName = bundle.getString(GamesActivity.EXTRA_PLAYER_NAME, "");
-            this.mSeasonInfo = bundle.getParcelable(GamesActivity.EXTRA_SEASON_INFO);
-            this.mScore = bundle.getInt(GamesActivity.EXTRA_WEEK_SCORE);
+            mPlayerName = bundle.getString(GamesActivity.EXTRA_PLAYER_NAME, "");
+            mSeasonInfo = bundle.getParcelable(GamesActivity.EXTRA_SEASON_INFO);
+            mScore = bundle.getInt(GamesActivity.EXTRA_WEEK_SCORE);
         }
 
-        String title = (this.mSeasonInfo != null) ? getString(R.string.week) + " " + mSeasonInfo.getWeek() : getString(R.string.current_week);
+        String title = (mSeasonInfo != null) ? getString(R.string.week) + " " + mSeasonInfo.getWeek() : getString(R.string.current_week);
         getActivity().getActionBar().setTitle(title);
     }
 
