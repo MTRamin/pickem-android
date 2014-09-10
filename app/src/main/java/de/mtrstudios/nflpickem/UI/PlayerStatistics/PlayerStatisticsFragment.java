@@ -168,7 +168,7 @@ public class PlayerStatisticsFragment extends BaseFragment {
         mAdapter.setSeasonInfo(event.getSeasonInfo());
         mAdapter.setPlayerName(event.getPlayerName());
         mAdapter.setScores(scores);
-        mAdapter.setMaxScore(event.getTotalGamesPlayed());
+        mAdapter.setGamesPerWeek(event.getGamesPerWeek());
 
         // Set UI components
         viewScore.setText(String.valueOf(event.getScores().getTotalScore()));

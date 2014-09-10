@@ -57,19 +57,20 @@ public class PlayerStatisticsService extends LoaderService {
             // Statistics for logged in user
             List<Score> scores = new ArrayList<Score>();
             Map<Integer, Score> savedScores = mAppData.getScoresByWeek();
+            Map<Integer, Integer> gamesPerWeek = mAppData.getGamesPerWeek();
 
             for (Integer week : savedScores.keySet()) {
                 scores.add(savedScores.get(week));
             }
 
-            mBus.post(new PlayerScoresLoadedEvent(mAppData.getTotalGamesPlayed(), event.getPlayerName(), new Scores(scores), PickEmDataHandler.getInstance().getSeasonInfo()));
+            mBus.post(new PlayerScoresLoadedEvent(mAppData.getTotalGamesPlayed(), event.getPlayerName(), new Scores(scores), mAppData.getSeasonInfo(), gamesPerWeek));
 
         } else {
             // Statistics for another user
             mApi.getScoreForUser(event.getPlayerName(), mAppData.getSeasonInfo().getSeason(), mAppData.getSeasonInfo().getType().getSeasonTypeCode(), event.getToken(), new retrofit.Callback<Response<Scores>>() {
                 @Override
                 public void success(Response<Scores> scoresResponse, retrofit.client.Response response) {
-                    mBus.post(new PlayerScoresLoadedEvent(mAppData.getTotalGamesPlayed(), event.getPlayerName(), scoresResponse.getData(), PickEmDataHandler.getInstance().getSeasonInfo()));
+                    mBus.post(new PlayerScoresLoadedEvent(mAppData.getTotalGamesPlayed(), event.getPlayerName(), scoresResponse.getData(), mAppData.getSeasonInfo(), mAppData.getGamesPerWeek()));
                 }
 
                 @Override

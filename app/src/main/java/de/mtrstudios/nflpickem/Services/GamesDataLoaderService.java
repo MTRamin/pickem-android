@@ -68,11 +68,17 @@ public class GamesDataLoaderService extends LoaderService {
             mAppData.clearDataForRefresh();
         }
 
-        if (needSeasonInfoUpdate() || event.isForcedUpdate()) {
-            downloadSeasonInfo(event, response);
+        if (event.isCurrentWeek()) {
+            if (needSeasonInfoUpdate() || event.isForcedUpdate()) {
+                downloadSeasonInfo(event, response);
+            } else {
+                onSeasonInfoLoaded(mAppData.getSeasonInfo(), event, response);
+            }
         } else {
-            onSeasonInfoLoaded(mAppData.getSeasonInfo(), event, response);
+            onSeasonInfoLoaded(event.getSeasonInfo(), event, response);
         }
+
+
     }
 
     /**

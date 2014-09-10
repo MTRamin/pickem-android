@@ -46,9 +46,9 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
 
     private SeasonInfo mSeasonInfo;
     private String mPlayerName;
-    private int mMaxScore;
 
     private Map<Integer, Score> mScores = new HashMap<Integer, Score>();
+    private Map<Integer, Integer> mGamesPerWeek = new HashMap<Integer, Integer>();
 
     public PlayerStatisticsListAdapter(PlayerStatisticsActivity parent) {
         mParent = parent;
@@ -101,8 +101,8 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
         final SeasonInfo rowSeason = new SeasonInfo(mSeasonInfo.getSeason(), week, mSeasonInfo.getType());
 
         if ((mScores != null) && (mScores.size() != 0)) {
-            final int score = mScores.get(week).getScore();
-            final int maxScore = mMaxScore;
+            final int score = (mScores.containsKey(week)) ? mScores.get(week).getScore() : 0;
+            final int maxScore = mGamesPerWeek.get(week);
 
             int percentage = 0;
             if (maxScore > 0) {
@@ -152,8 +152,8 @@ public class PlayerStatisticsListAdapter extends BaseAdapter {
         mSeasonInfo = seasonInfo;
     }
 
-    public void setMaxScore(int maxScore) {
-        mMaxScore = maxScore;
+    public void setGamesPerWeek(Map<Integer, Integer> gamesPerWeek) {
+        this.mGamesPerWeek = gamesPerWeek;
     }
 
     /**

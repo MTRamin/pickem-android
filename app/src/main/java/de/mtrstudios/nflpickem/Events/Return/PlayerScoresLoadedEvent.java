@@ -15,6 +15,8 @@
  */
 package de.mtrstudios.nflpickem.Events.Return;
 
+import java.util.Map;
+
 import de.mtrstudios.nflpickem.API.Responses.Scores;
 import de.mtrstudios.nflpickem.API.Responses.SeasonInfo;
 
@@ -26,12 +28,18 @@ public class PlayerScoresLoadedEvent {
     private final String playerName;
     private final int totalGamesPlayed;
     private final SeasonInfo seasonInfo;
+    private final Map<Integer, Integer> gamesPerWeek;
 
-    public PlayerScoresLoadedEvent(int totalGamesPlayed, String playerName, Scores scores, SeasonInfo seasonInfo) {
+    public PlayerScoresLoadedEvent(int totalGamesPlayed, String playerName, Scores scores, SeasonInfo seasonInfo, Map<Integer, Integer> gamesPerWeek) {
         this.totalGamesPlayed = totalGamesPlayed;
         this.playerName = playerName;
         this.scores = scores;
         this.seasonInfo = seasonInfo;
+        this.gamesPerWeek = gamesPerWeek;
+    }
+
+    public Map<Integer, Integer> getGamesPerWeek() {
+        return gamesPerWeek;
     }
 
     public Scores getScores() {
